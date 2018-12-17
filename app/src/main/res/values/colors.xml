@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/gunmetal</color>
+    <color name="colorPrimaryDark">@color/navy_blue</color>
+    <color name="colorAccent">@color/warm_yellow</color>
+
+    <color name="navy_blue">#18121E</color>
+    <color name="gunmetal">#233237</color>
+    <color name="rusty_red">#984B43</color>
+    <color name="warm_yellow">#EAC67A</color>
+
+    <color name="text_color_white">#EEEEEE</color>
+</resources>
