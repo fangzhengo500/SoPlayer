@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".MainActivity">
+    tools:context=".ui.MainActivity">
 
 
     <FrameLayout
-        android:clickable="true"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="4"
-        android:background="@drawable/background_main_header">
+        android:background="@drawable/background_main_header"
+        android:clickable="true">
 
     </FrameLayout>
 
@@ -26,11 +26,13 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/btn_media_explorer"
             style="@style/MainItemTextStyle"
             android:drawableLeft="@drawable/ic_action_folder"
             android:text="@string/main_media_explorer" />
 
         <TextView
+            android:id="@+id/btn_settings"
             style="@style/MainItemTextStyle"
             android:drawableLeft="@drawable/ic_action_settings"
             android:text="@string/main_settings" />

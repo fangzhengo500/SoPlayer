@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
     <!-- Base application theme. -->
     <style name="AppTheme.FullScreen" parent="AppTheme">
@@ -18,7 +20,13 @@
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:drawablePadding">10dp</item>
         <item name="android:textColor">@color/main_item_text_color_selector</item>
-        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textSize">22sp</item>
         <item name="android:clickable">true</item>
+    </style>
+
+    <style name="SoToolbarBtnStyle">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:padding">10dp</item>
     </style>
 </resources>
