@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.loosu.soplayer.R;
+import com.loosu.soplayer.utils.DataHelper;
 import com.loosu.soplayer.utils.SystemUiUtil;
 import com.loosu.soplayer.widget.SoToolbar;
 
@@ -21,6 +22,12 @@ public class DocumentsFragment extends Fragment {
 
     private SoToolbar mToolbar;
     private RecyclerView mViewList;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        init(savedInstanceState);
+    }
 
     @Nullable
     @Override
@@ -33,6 +40,11 @@ public class DocumentsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         findView(view, savedInstanceState);
         initView(view, savedInstanceState);
+        initListener(view, savedInstanceState);
+    }
+
+    private void init(Bundle savedInstanceState) {
+
     }
 
     private void findView(View view, Bundle savedInstanceState) {
@@ -59,5 +71,11 @@ public class DocumentsFragment extends Fragment {
 
         // viewList
         mViewList.setLayoutManager(new LinearLayoutManager(context));
+
+        DataHelper.getVideos(getContext());
+    }
+
+    private void initListener(View view, Bundle savedInstanceState) {
+
     }
 }
