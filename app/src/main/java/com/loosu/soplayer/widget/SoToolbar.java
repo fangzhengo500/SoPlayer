@@ -5,6 +5,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
@@ -47,11 +48,26 @@ public class SoToolbar extends FrameLayout {
         mBtnSoToolbarNavigation.setBackgroundColor(color);
     }
 
+    public void setNavigationBackgroundResource(@DrawableRes int resId) {
+        mBtnSoToolbarNavigation.setBackgroundResource(resId);
+    }
     public void setPositionIcon(@DrawableRes int resId) {
         mBtnSoToolbarPosition.setImageResource(resId);
     }
 
     public void setPositionIconBackgroundColor(@ColorInt int color) {
         mBtnSoToolbarPosition.setBackgroundColor(color);
+    }
+
+    public void setTitle(@StringRes int resId) {
+        mTvSoToolbarTitle.setText(resId);
+    }
+
+    public void setTitle(CharSequence text) {
+        mTvSoToolbarTitle.setText(text);
+    }
+
+    public void setNavigationClickListener(OnClickListener listener) {
+        mBtnSoToolbarNavigation.setOnClickListener(listener);
     }
 }

@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">SoPlayer</string>
 
+    <!-- main -->
     <string name="main_media_explorer">本地视频</string>
     <string name="main_settings">设置</string>
+
+    <!-- documents -->
+    <string name="documents_label">Documents</string>
 </resources>

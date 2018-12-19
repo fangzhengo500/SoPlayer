@@ -17,12 +17,14 @@ import com.loosu.soplayer.R;
 import com.loosu.soplayer.adapter.VideoSimpleAdapter;
 import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.DataHelper;
+import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.SystemUiUtil;
 import com.loosu.soplayer.widget.SoToolbar;
 
 import java.util.List;
 
 public class DocumentsFragment extends Fragment {
+    private static final String TAG = "DocumentsFragment";
 
     private SoToolbar mToolbar;
     private RecyclerView mViewList;
@@ -68,9 +70,13 @@ public class DocumentsFragment extends Fragment {
                 mToolbar.getPaddingRight(),
                 mToolbar.getPaddingBottom());
 
+        // toolbar - title
+        mToolbar.setTitle(R.string.documents_label);
+        Toolbar toolbar;
+
         // toolbar - navigation
-        mToolbar.setNavigationIcon(R.drawable.ic_action_menu);
-        mToolbar.setNavigationBackgroundColor(resources.getColor(R.color.rusty_red));
+        mToolbar.setNavigationIcon(R.drawable.ic_action_menu_click_drawable);
+        mToolbar.setNavigationBackgroundResource(R.drawable.toolbar_navigation_background);
 
         // toolbar - position
         mToolbar.setPositionIcon(R.drawable.ic_action_more_vert);
@@ -81,6 +87,18 @@ public class DocumentsFragment extends Fragment {
     }
 
     private void initListener(View view, Bundle savedInstanceState) {
-
+        mToolbar.setNavigationClickListener(mToolBarNavigationOnClickListener);
     }
+
+    private void onClickToolBarNavigation(View v) {
+        // TODO: 2018/12/19/019 展开侧边栏
+        KLog.d(TAG, " v = "+v);
+    }
+
+    private View.OnClickListener mToolBarNavigationOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickToolBarNavigation(v);
+        }
+    };
 }

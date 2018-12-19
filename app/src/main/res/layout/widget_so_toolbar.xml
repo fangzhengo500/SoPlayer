@@ -9,6 +9,7 @@
     <ImageView
         android:id="@+id/so_toolbar_btn_nagtion"
         style="@style/SoToolbarBtnStyle"
+        android:clickable="true"
         tools:background="@color/colorPrimary"
         tools:src="@drawable/ic_action_menu" />
 

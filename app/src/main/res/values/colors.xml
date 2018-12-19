@@ -9,6 +9,8 @@
     <color name="rusty_red">#984B43</color>
     <color name="warm_yellow">#EAC67A</color>
 
+    <color name="ripple_color">@color/warm_yellow</color>
+
     <color name="text_color_white">#EEEEEE</color>
     <color name="text_color_gray">#AAA</color>
 </resources>

@@ -8,7 +8,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_so_toolbar"
+        android:background="@drawable/background_toolbar"
         android:elevation="1.5dp" />
 
     <android.support.v7.widget.RecyclerView
@@ -17,11 +17,4 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@color/gunmetal" />
-
-    <LinearLayout
-        android:background="@color/navy_blue"
-        android:layout_width="match_parent"
-        android:layout_height="48dp">
-
-    </LinearLayout>
 </LinearLayout>
