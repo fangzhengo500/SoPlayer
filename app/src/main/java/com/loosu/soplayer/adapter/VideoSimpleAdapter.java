@@ -9,9 +9,8 @@ import com.loosu.soplayer.R;
 import com.loosu.soplayer.adapter.base.recyclerview.ARecyclerAdapter;
 import com.loosu.soplayer.adapter.base.recyclerview.RecyclerHolder;
 import com.loosu.soplayer.domain.VideoEntry;
+import com.loosu.soplayer.utils.TimeUtil;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class VideoSimpleAdapter extends ARecyclerAdapter<VideoEntry> {
@@ -30,9 +29,9 @@ public class VideoSimpleAdapter extends ARecyclerAdapter<VideoEntry> {
         Context context = holder.itemView.getContext();
 
         VideoEntry videoEntry = getItem(position);
-        Date date = new Date(videoEntry.getDuration());
+
         holder.setText(R.id.tv_title, videoEntry.getDisplayName());
-        holder.setText(R.id.tv_duration, date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds());
+        holder.setText(R.id.tv_duration, TimeUtil.formatDuration(videoEntry.getDuration()));
         holder.setText(R.id.tv_size, Formatter.formatShortFileSize(context, videoEntry.getSize()));
         holder.setText(R.id.tv_display_size, videoEntry.getWidth() + "X" + videoEntry.getHeight());
 
