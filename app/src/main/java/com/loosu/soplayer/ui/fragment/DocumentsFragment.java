@@ -6,14 +6,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.loosu.soplayer.R;
+import com.loosu.soplayer.adapter.VideoCardAdapter;
 import com.loosu.soplayer.adapter.VideoSimpleAdapter;
 import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.DataHelper;
@@ -28,7 +32,11 @@ public class DocumentsFragment extends Fragment {
 
     private SoToolbar mToolbar;
     private RecyclerView mViewList;
+
+    private List<VideoEntry> mVideoEntries;
+
     private VideoSimpleAdapter mAdapter;
+    private GridLayoutManager mLayoutManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,8 +59,12 @@ public class DocumentsFragment extends Fragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        List<VideoEntry> videoEntries = DataHelper.getVideos(getContext());
-        mAdapter = new VideoSimpleAdapter(videoEntries);
+        final Context context = getContext();
+
+        mVideoEntries = DataHelper.getVideos(context);
+        mAdapter = new VideoSimpleAdapter(mVideoEntries);
+
+        mLayoutManager = new GridLayoutManager(context, 1);
     }
 
     private void findView(View view, Bundle savedInstanceState) {
@@ -80,25 +92,50 @@ public class DocumentsFragment extends Fragment {
 
         // toolbar - position
         mToolbar.setPositionIcon(R.drawable.ic_action_more_vert);
-
+        mToolbar.setPositionBackgroundResource(R.drawable.toolbar_position_background);
         // viewList
-        mViewList.setLayoutManager(new LinearLayoutManager(context));
+        mViewList.setLayoutManager(mLayoutManager);
         mViewList.setAdapter(mAdapter);
     }
 
     private void initListener(View view, Bundle savedInstanceState) {
         mToolbar.setNavigationClickListener(mToolBarNavigationOnClickListener);
+        mToolbar.setPositionClickListener(mToolBarPositionOnClickListener);
     }
 
     private void onClickToolBarNavigation(View v) {
         // TODO: 2018/12/19/019 展开侧边栏
-        KLog.d(TAG, " v = "+v);
+        KLog.d(TAG, " v = " + v);
     }
 
-    private View.OnClickListener mToolBarNavigationOnClickListener = new View.OnClickListener() {
+    private void onClickToolBarPosition(View v) {
+        KLog.d(TAG, " v = " + v);
+        PopupMenu popupMenu = new PopupMenu(getContext(), v);
+        popupMenu.getMenuInflater().inflate(R.menu.document_toolbar, popupMenu.getMenu());
+        popupMenu.show();
+        popupMenu.setOnMenuItemClickListener(mMenuItemClickListener);
+    }
+
+    private final View.OnClickListener mToolBarNavigationOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             onClickToolBarNavigation(v);
+        }
+    };
+
+    private final View.OnClickListener mToolBarPositionOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickToolBarPosition(v);
+        }
+    };
+
+    private final PopupMenu.OnMenuItemClickListener mMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            mLayoutManager.setSpanCount(2);
+            mViewList.setAdapter(new VideoCardAdapter(mVideoEntries));
+            return false;
         }
     };
 }

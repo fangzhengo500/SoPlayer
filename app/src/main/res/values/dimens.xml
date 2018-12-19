@@ -4,4 +4,5 @@
     <dimen name="text_size_normal">16sp</dimen>
     <dimen name="text_size_big">18sp</dimen>
     <dimen name="text_size_large">20sp</dimen>
+    <dimen name="item_video_card_margin_top">0dp</dimen>
 </resources>

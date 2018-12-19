@@ -51,12 +51,25 @@ public class SoToolbar extends FrameLayout {
     public void setNavigationBackgroundResource(@DrawableRes int resId) {
         mBtnSoToolbarNavigation.setBackgroundResource(resId);
     }
+
+    public void setNavigationClickListener(OnClickListener listener) {
+        mBtnSoToolbarNavigation.setOnClickListener(listener);
+    }
+
     public void setPositionIcon(@DrawableRes int resId) {
         mBtnSoToolbarPosition.setImageResource(resId);
     }
 
     public void setPositionIconBackgroundColor(@ColorInt int color) {
         mBtnSoToolbarPosition.setBackgroundColor(color);
+    }
+
+    public void setPositionBackgroundResource(@DrawableRes int resId) {
+        mBtnSoToolbarPosition.setBackgroundResource(resId);
+    }
+
+    public void setPositionClickListener(OnClickListener listener) {
+        mBtnSoToolbarPosition.setOnClickListener(listener);
     }
 
     public void setTitle(@StringRes int resId) {
@@ -67,7 +80,4 @@ public class SoToolbar extends FrameLayout {
         mTvSoToolbarTitle.setText(text);
     }
 
-    public void setNavigationClickListener(OnClickListener listener) {
-        mBtnSoToolbarNavigation.setOnClickListener(listener);
-    }
 }
