@@ -5,32 +5,112 @@ import android.provider.MediaStore;
 
 public class VideoEntry {
 
-    private String mData;
-    private String mDataAdded;
-    private String mDataModified;
-    private String mDisplayName;
-    private String mHeight;
-    private String mWidth;
-    private String mMimeType;
-    private String mSize;
     private String mTitle;
-    private String mDuration;
+    private String mDisplayName;
+    private String mData;
+    private String mMimeType;
+    private long mDuration;
+    private long mSize;
+    private long mDataAdded;
+    private long mDataModified;
+    private int mHeight;
+    private int mWidth;
 
     public VideoEntry(Cursor cursor) {
         if (cursor == null) {
             return;
         }
 
-        mData = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATA));
-        mDataAdded = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATE_ADDED));
-        mDataModified = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATE_MODIFIED));
-        mDisplayName = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DISPLAY_NAME));
-        mHeight = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.HEIGHT));
-        mWidth = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.WIDTH));
-        mMimeType = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.MIME_TYPE));
-        mSize = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.SIZE));
         mTitle = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.TITLE));
-        mDuration = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
+        mDisplayName = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DISPLAY_NAME));
+        mData = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATA));
+        mMimeType = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.MIME_TYPE));
+        mDuration = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
+        mSize = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.SIZE));
+        mDataAdded = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATE_ADDED));
+        mDataModified = cursor.getLong(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATE_MODIFIED));
+        mHeight = cursor.getInt(cursor.getColumnIndex(MediaStore.Video.VideoColumns.HEIGHT));
+        mWidth = cursor.getInt(cursor.getColumnIndex(MediaStore.Video.VideoColumns.WIDTH));
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    public String getDisplayName() {
+        return mDisplayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        mDisplayName = displayName;
+    }
+
+    public String getData() {
+        return mData;
+    }
+
+    public void setData(String data) {
+        mData = data;
+    }
+
+    public String getMimeType() {
+        return mMimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        mMimeType = mimeType;
+    }
+
+    public long getDataAdded() {
+        return mDataAdded;
+    }
+
+    public void setDataAdded(long dataAdded) {
+        mDataAdded = dataAdded;
+    }
+
+    public long getDataModified() {
+        return mDataModified;
+    }
+
+    public void setDataModified(long dataModified) {
+        mDataModified = dataModified;
+    }
+
+    public int getHeight() {
+        return mHeight;
+    }
+
+    public void setHeight(int height) {
+        mHeight = height;
+    }
+
+    public int getWidth() {
+        return mWidth;
+    }
+
+    public void setWidth(int width) {
+        mWidth = width;
+    }
+
+    public long getSize() {
+        return mSize;
+    }
+
+    public void setSize(long size) {
+        mSize = size;
+    }
+
+    public long getDuration() {
+        return mDuration;
+    }
+
+    public void setDuration(long duration) {
+        mDuration = duration;
     }
 
     @Override

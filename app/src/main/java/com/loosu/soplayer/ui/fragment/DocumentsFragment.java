@@ -14,14 +14,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.loosu.soplayer.R;
+import com.loosu.soplayer.adapter.VideoSimpleAdapter;
+import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.DataHelper;
 import com.loosu.soplayer.utils.SystemUiUtil;
 import com.loosu.soplayer.widget.SoToolbar;
+
+import java.util.List;
 
 public class DocumentsFragment extends Fragment {
 
     private SoToolbar mToolbar;
     private RecyclerView mViewList;
+    private VideoSimpleAdapter mAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,7 +49,8 @@ public class DocumentsFragment extends Fragment {
     }
 
     private void init(Bundle savedInstanceState) {
-
+        List<VideoEntry> videoEntries = DataHelper.getVideos(getContext());
+        mAdapter = new VideoSimpleAdapter(videoEntries);
     }
 
     private void findView(View view, Bundle savedInstanceState) {
@@ -71,8 +77,7 @@ public class DocumentsFragment extends Fragment {
 
         // viewList
         mViewList.setLayoutManager(new LinearLayoutManager(context));
-
-        DataHelper.getVideos(getContext());
+        mViewList.setAdapter(mAdapter);
     }
 
     private void initListener(View view, Bundle savedInstanceState) {

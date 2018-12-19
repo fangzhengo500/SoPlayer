@@ -10,4 +10,5 @@
     <color name="warm_yellow">#EAC67A</color>
 
     <color name="text_color_white">#EEEEEE</color>
+    <color name="text_color_gray">#AAA</color>
 </resources>

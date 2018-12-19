@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:background="#666"
+    android:layout_height="65dp"
+    android:layout_marginTop="1dp"
+    android:background="#555"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -20,8 +21,11 @@
             android:src="@drawable/ic_action_play_circle_filled" />
 
         <TextView
+            android:id="@+id/tv_mine_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textColor="@color/text_color_white"
             android:textSize="11sp"
             tools:text="MP4" />
     </LinearLayout>
@@ -29,11 +33,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:textColor="@color/text_color_white"
             android:textSize="@dimen/text_size_normal"
             tools:text="display name" />
@@ -41,27 +49,39 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <ProgressBar
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="150dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                tools:progress="100" />
 
-            <!--<TextView-->
-                <!--android:id="@+id/tv_duration"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content" />-->
+            <TextView
+                android:id="@+id/tv_duration"
+                style="@style/VideoSimpleInfoTextStyle"
+                tools:text="03:07" />
 
-            <!--<TextView-->
-                <!--android:id="@+id/tv_duration"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content" />-->
+            <TextView
+                style="@style/VideoSimpleInfoTextStyle"
+                android:text=" | " />
 
-            <!--<TextView-->
-                <!--android:id="@+id/tv_duration"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content" />-->
+            <TextView
+                android:id="@+id/tv_size"
+                style="@style/VideoSimpleInfoTextStyle"
+                tools:text="50MB" />
+
+            <TextView
+                style="@style/VideoSimpleInfoTextStyle"
+                android:text=" | " />
+
+            <TextView
+                android:id="@+id/tv_display_size"
+                style="@style/VideoSimpleInfoTextStyle"
+                tools:text="640X480" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>
