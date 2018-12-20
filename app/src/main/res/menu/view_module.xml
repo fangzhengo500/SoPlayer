@@ -5,10 +5,10 @@
         <item
             android:id="@+id/menu_view_module_list"
             android:icon="@drawable/ic_action_view_list_light"
-            android:title="@string/list_mode_list" />
+            android:title="@string/menu_view_mode_list" />
         <item
             android:id="@+id/menu_view_module_card"
             android:icon="@drawable/ic_action_view_module_light"
-            android:title="@string/list_mode_card" />
+            android:title="@string/menu_view_mode_card" />
     </group>
 </menu>

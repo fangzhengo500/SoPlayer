@@ -2,5 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_view_module"
-        android:title="@string/documents_menu_list_mode" />
+        android:title="@string/menu_view_mode" />
+    <item
+        android:id="@+id/menu_order"
+        android:title="@string/menu_order" />
 </menu>

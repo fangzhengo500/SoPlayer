@@ -7,7 +7,10 @@
 
     <!-- documents -->
     <string name="documents_label">Documents</string>
-    <string name="documents_menu_list_mode">模式</string>
-    <string name="list_mode_list">列表</string>
-    <string name="list_mode_card">卡片</string>
+
+    <!-- menu -->
+    <string name="menu_view_mode">模式</string>
+    <string name="menu_view_mode_list">列表</string>
+    <string name="menu_view_mode_card">卡片</string>
+    <string name="menu_order">排序</string>
 </resources>
