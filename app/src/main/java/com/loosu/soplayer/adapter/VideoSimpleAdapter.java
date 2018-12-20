@@ -13,7 +13,7 @@ import com.loosu.soplayer.utils.TimeUtil;
 
 import java.util.List;
 
-public class VideoSimpleAdapter extends ARecyclerAdapter<VideoEntry> {
+public class VideoSimpleAdapter extends DocumentVideoAdapter {
 
     public VideoSimpleAdapter(@Nullable List<VideoEntry> datas) {
         super(datas);
@@ -36,10 +36,5 @@ public class VideoSimpleAdapter extends ARecyclerAdapter<VideoEntry> {
         holder.setText(R.id.tv_display_size, videoEntry.getWidth() + "X" + videoEntry.getHeight());
 
         holder.setText(R.id.tv_mine_type, MimeTypeMap.getSingleton().getExtensionFromMimeType(videoEntry.getMimeType()));
-    }
-
-    @Override
-    public VideoEntry getItem(int position) {
-        return mDatas.get(position);
     }
 }

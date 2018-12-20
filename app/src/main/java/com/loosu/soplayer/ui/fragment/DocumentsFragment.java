@@ -7,21 +7,23 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.loosu.soplayer.R;
+import com.loosu.soplayer.adapter.DocumentVideoAdapter;
 import com.loosu.soplayer.adapter.VideoCardAdapter;
 import com.loosu.soplayer.adapter.VideoSimpleAdapter;
 import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.DataHelper;
 import com.loosu.soplayer.utils.KLog;
+import com.loosu.soplayer.utils.PopupMenuUtil;
 import com.loosu.soplayer.utils.SystemUiUtil;
 import com.loosu.soplayer.widget.SoToolbar;
 
@@ -30,13 +32,18 @@ import java.util.List;
 public class DocumentsFragment extends Fragment {
     private static final String TAG = "DocumentsFragment";
 
+    private static final int VIEW_MODULE_DEFAULT = 0;
+    private static final int VIEW_MODULE_CARD = 1;
+
     private SoToolbar mToolbar;
     private RecyclerView mViewList;
 
     private List<VideoEntry> mVideoEntries;
 
-    private VideoSimpleAdapter mAdapter;
+    private DocumentVideoAdapter mAdapter;
     private GridLayoutManager mLayoutManager;
+
+    private int mViewModule = VIEW_MODULE_DEFAULT;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -116,6 +123,26 @@ public class DocumentsFragment extends Fragment {
         popupMenu.setOnMenuItemClickListener(mMenuItemClickListener);
     }
 
+    private void onMenuViewModule(MenuItem menuItem) {
+        PopupMenu popupMenu = new PopupMenu(getContext(), mToolbar, Gravity.RIGHT);
+        popupMenu.getMenuInflater().inflate(R.menu.view_module, popupMenu.getMenu());
+        popupMenu.getMenu().findItem(mViewModule == VIEW_MODULE_CARD ? R.id.menu_view_module_card : R.id.menu_view_module_list).setChecked(true);
+        popupMenu.show();
+        popupMenu.setOnMenuItemClickListener(mMenuItemClickListener);
+        PopupMenuUtil.forceShowIcon(popupMenu, true);
+    }
+
+
+    private void onMenuViewModuleList(MenuItem menuItem) {
+        menuItem.setChecked(true);
+        setViewModule(VIEW_MODULE_DEFAULT);
+    }
+
+    private void onMenuViewModuleCard(MenuItem menuItem) {
+        menuItem.setChecked(true);
+        setViewModule(VIEW_MODULE_CARD);
+    }
+
     private final View.OnClickListener mToolBarNavigationOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -130,12 +157,48 @@ public class DocumentsFragment extends Fragment {
         }
     };
 
+    /**
+     * 切换列表样式
+     *
+     * @param itemMode {@link #VIEW_MODULE_DEFAULT}  默认风格
+     *                 {@link #VIEW_MODULE_CARD}     卡片风格
+     */
+    private void setViewModule(int itemMode) {
+        if (mViewModule == itemMode) {
+            return;
+        }
+        mViewModule = itemMode;
+        switch (itemMode) {
+            case VIEW_MODULE_CARD:
+                mAdapter = new VideoCardAdapter(mVideoEntries);
+                mViewList.setAdapter(mAdapter);
+                mLayoutManager.setSpanCount(2);
+                break;
+            default:
+                mAdapter = new VideoSimpleAdapter(mVideoEntries);
+                mViewList.setAdapter(mAdapter);
+                mLayoutManager.setSpanCount(1);
+                break;
+        }
+    }
+
     private final PopupMenu.OnMenuItemClickListener mMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
-            mLayoutManager.setSpanCount(2);
-            mViewList.setAdapter(new VideoCardAdapter(mVideoEntries));
+            switch (menuItem.getItemId()) {
+                case R.id.menu_view_module:
+                    onMenuViewModule(menuItem);
+                    break;
+                case R.id.menu_view_module_list:
+                    onMenuViewModuleList(menuItem);
+                    break;
+                case R.id.menu_view_module_card:
+                    onMenuViewModuleCard(menuItem);
+                    break;
+            }
             return false;
         }
+
+
     };
 }

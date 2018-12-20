@@ -8,4 +8,6 @@
     <!-- documents -->
     <string name="documents_label">Documents</string>
     <string name="documents_menu_list_mode">模式</string>
+    <string name="list_mode_list">列表</string>
+    <string name="list_mode_card">卡片</string>
 </resources>

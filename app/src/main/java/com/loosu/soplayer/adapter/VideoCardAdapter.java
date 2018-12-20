@@ -7,14 +7,13 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.loosu.soplayer.R;
-import com.loosu.soplayer.adapter.base.recyclerview.ARecyclerAdapter;
 import com.loosu.soplayer.adapter.base.recyclerview.RecyclerHolder;
 import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.TimeUtil;
 
 import java.util.List;
 
-public class VideoCardAdapter extends ARecyclerAdapter<VideoEntry> {
+public class VideoCardAdapter extends DocumentVideoAdapter {
     public VideoCardAdapter(@Nullable List<VideoEntry> datas) {
         super(datas);
     }
@@ -38,11 +37,5 @@ public class VideoCardAdapter extends ARecyclerAdapter<VideoEntry> {
         Glide.with(holder.itemView)
                 .load(videoEntry.getData())
                 .into((ImageView) holder.getView(R.id.iv_cover));
-    }
-
-
-    @Override
-    public VideoEntry getItem(int position) {
-        return mDatas.get(position);
     }
 }
