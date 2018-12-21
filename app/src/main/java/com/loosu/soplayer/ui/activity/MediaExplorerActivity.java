@@ -1,4 +1,4 @@
-package com.loosu.soplayer.ui;
+package com.loosu.soplayer.ui.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

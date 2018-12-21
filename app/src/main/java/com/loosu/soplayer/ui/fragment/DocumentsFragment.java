@@ -1,6 +1,7 @@
 package com.loosu.soplayer.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -20,11 +22,13 @@ import com.loosu.soplayer.R;
 import com.loosu.soplayer.adapter.DocumentVideoAdapter;
 import com.loosu.soplayer.adapter.VideoCardAdapter;
 import com.loosu.soplayer.adapter.VideoSimpleAdapter;
+import com.loosu.soplayer.adapter.base.recyclerview.IRecyclerItemClickListener;
 import com.loosu.soplayer.business.comparator.VideoDurationComparator;
 import com.loosu.soplayer.business.comparator.VideoNameComparator;
 import com.loosu.soplayer.business.comparator.VideoSizeComparator;
 import com.loosu.soplayer.business.comparator.VideoTypeComparator;
 import com.loosu.soplayer.domain.VideoEntry;
+import com.loosu.soplayer.ui.activity.VideoPlayerActivity;
 import com.loosu.soplayer.utils.DataHelper;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.PopupMenuUtil;
@@ -33,11 +37,14 @@ import com.loosu.soplayer.widget.SoToolbar;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DocumentsFragment extends Fragment {
     private static final String TAG = "DocumentsFragment";
 
+    private static final int VIEW_MODULE_UNKOWN = -1;
     private static final int VIEW_MODULE_DEFAULT = 0;
     private static final int VIEW_MODULE_CARD = 1;
 
@@ -46,10 +53,11 @@ public class DocumentsFragment extends Fragment {
 
     private List<VideoEntry> mVideoEntries;
 
-    private DocumentVideoAdapter mAdapter;
+    private SparseArray<DocumentVideoAdapter> mAdapters = new SparseArray<>();
+
     private GridLayoutManager mLayoutManager;
 
-    private int mViewModule = VIEW_MODULE_DEFAULT;
+    private int mViewModule = VIEW_MODULE_UNKOWN;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,7 +83,9 @@ public class DocumentsFragment extends Fragment {
         final Context context = getContext();
 
         mVideoEntries = DataHelper.getVideos(context);
-        mAdapter = new VideoSimpleAdapter(mVideoEntries);
+
+        mAdapters.put(VIEW_MODULE_DEFAULT, new VideoSimpleAdapter(null));
+        mAdapters.put(VIEW_MODULE_CARD, new VideoCardAdapter(null));
 
         mLayoutManager = new GridLayoutManager(context, 1);
     }
@@ -97,7 +107,6 @@ public class DocumentsFragment extends Fragment {
 
         // toolbar - title
         mToolbar.setTitle(R.string.documents_label);
-        Toolbar toolbar;
 
         // toolbar - navigation
         mToolbar.setNavigationIcon(R.drawable.ic_action_menu_click_drawable);
@@ -108,12 +117,18 @@ public class DocumentsFragment extends Fragment {
         mToolbar.setPositionBackgroundResource(R.drawable.toolbar_position_background);
         // viewList
         mViewList.setLayoutManager(mLayoutManager);
-        mViewList.setAdapter(mAdapter);
+        setViewModule(VIEW_MODULE_DEFAULT);
     }
 
     private void initListener(View view, Bundle savedInstanceState) {
+        // toolbar
         mToolbar.setNavigationClickListener(mToolBarNavigationOnClickListener);
         mToolbar.setPositionClickListener(mToolBarPositionOnClickListener);
+
+        for (int i = 0; i < mAdapters.size(); i++) {
+            DocumentVideoAdapter adapter = mAdapters.get(mAdapters.indexOfKey(i));
+            adapter.setItemClickListener(mItemClickListener);
+        }
     }
 
     private void onClickToolBarNavigation(View v) {
@@ -173,19 +188,6 @@ public class DocumentsFragment extends Fragment {
         setVideoOderModule(new VideoTypeComparator());
     }
 
-    private final View.OnClickListener mToolBarNavigationOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onClickToolBarNavigation(v);
-        }
-    };
-
-    private final View.OnClickListener mToolBarPositionOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onClickToolBarPosition(v);
-        }
-    };
 
     /**
      * 切换列表样式
@@ -198,18 +200,21 @@ public class DocumentsFragment extends Fragment {
             return;
         }
         mViewModule = itemMode;
+
+        int position = mLayoutManager.findFirstVisibleItemPosition();
         switch (itemMode) {
             case VIEW_MODULE_CARD:
-                mAdapter = new VideoCardAdapter(mVideoEntries);
-                mViewList.setAdapter(mAdapter);
                 mLayoutManager.setSpanCount(2);
                 break;
             default:
-                mAdapter = new VideoSimpleAdapter(mVideoEntries);
-                mViewList.setAdapter(mAdapter);
                 mLayoutManager.setSpanCount(1);
                 break;
         }
+
+        DocumentVideoAdapter adapter = mAdapters.get(itemMode);
+        adapter.setDatas(mVideoEntries);
+        mViewList.setAdapter(adapter);
+        mViewList.scrollToPosition(position);
     }
 
     /**
@@ -218,11 +223,49 @@ public class DocumentsFragment extends Fragment {
      * @param comparator 比较器
      */
     private void setVideoOderModule(Comparator<? super VideoEntry> comparator) {
-        List<VideoEntry> datas = mAdapter.getDatas();
+        DocumentVideoAdapter adapter = (DocumentVideoAdapter) mViewList.getAdapter();
+        List<VideoEntry> datas = adapter.getDatas();
         Collections.sort(datas, comparator);
-        mAdapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 
+    /**
+     * 条目点击
+     */
+    private IRecyclerItemClickListener mItemClickListener = new IRecyclerItemClickListener() {
+        @Override
+        public void onItemClick(RecyclerView parent, int position, RecyclerView.ViewHolder holder, View view) {
+            DocumentVideoAdapter adapter = (DocumentVideoAdapter) parent.getAdapter();
+            VideoEntry videoEntry = adapter.getItem(position);
+
+            Intent intent = new Intent(getContext(), VideoPlayerActivity.class);
+            startActivity(intent);
+        }
+    };
+
+    /**
+     * toolbar - navigation btn click
+     */
+    private final View.OnClickListener mToolBarNavigationOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickToolBarNavigation(v);
+        }
+    };
+
+    /**
+     * toolbar - positive btn click
+     */
+    private final View.OnClickListener mToolBarPositionOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onClickToolBarPosition(v);
+        }
+    };
+
+    /**
+     * popup menu item click
+     */
     private final PopupMenu.OnMenuItemClickListener mMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
