@@ -4,6 +4,6 @@
         android:id="@+id/menu_view_module"
         android:title="@string/menu_view_mode" />
     <item
-        android:id="@+id/menu_order"
+        android:id="@+id/menu_order_module"
         android:title="@string/menu_order" />
 </menu>

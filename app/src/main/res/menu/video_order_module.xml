@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/menu_video_order_name"
+            android:title="@string/menu_video_order_name" />
+
+        <item
+            android:id="@+id/menu_video_order_duration"
+            android:title="@string/menu_video_order_duration" />
+
+        <item
+            android:id="@+id/menu_video_order_size"
+            android:title="@string/menu_video_order_size" />
+
+        <item
+            android:id="@+id/menu_video_order_type"
+            android:title="@string/menu_video_order_type" />
+    </group>
+</menu>

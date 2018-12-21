@@ -8,9 +8,15 @@
     <!-- documents -->
     <string name="documents_label">Documents</string>
 
-    <!-- menu -->
+    <!-- menu - view module -->
     <string name="menu_view_mode">模式</string>
     <string name="menu_view_mode_list">列表</string>
     <string name="menu_view_mode_card">卡片</string>
+
+    <!-- menu - video order module -->
     <string name="menu_order">排序</string>
+    <string name="menu_video_order_name">文件名</string>
+    <string name="menu_video_order_duration">播放时长</string>
+    <string name="menu_video_order_size">大小</string>
+    <string name="menu_video_order_type">类型</string>
 </resources>

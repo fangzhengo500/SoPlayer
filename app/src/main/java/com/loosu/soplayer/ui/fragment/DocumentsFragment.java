@@ -20,6 +20,10 @@ import com.loosu.soplayer.R;
 import com.loosu.soplayer.adapter.DocumentVideoAdapter;
 import com.loosu.soplayer.adapter.VideoCardAdapter;
 import com.loosu.soplayer.adapter.VideoSimpleAdapter;
+import com.loosu.soplayer.business.comparator.VideoDurationComparator;
+import com.loosu.soplayer.business.comparator.VideoNameComparator;
+import com.loosu.soplayer.business.comparator.VideoSizeComparator;
+import com.loosu.soplayer.business.comparator.VideoTypeComparator;
 import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.DataHelper;
 import com.loosu.soplayer.utils.KLog;
@@ -27,6 +31,8 @@ import com.loosu.soplayer.utils.PopupMenuUtil;
 import com.loosu.soplayer.utils.SystemUiUtil;
 import com.loosu.soplayer.widget.SoToolbar;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class DocumentsFragment extends Fragment {
@@ -123,7 +129,7 @@ public class DocumentsFragment extends Fragment {
         popupMenu.setOnMenuItemClickListener(mMenuItemClickListener);
     }
 
-    private void onMenuViewModule(MenuItem menuItem) {
+    private void onMenuItemSelectedViewModule(MenuItem menuItem) {
         PopupMenu popupMenu = new PopupMenu(getContext(), mToolbar, Gravity.RIGHT);
         popupMenu.getMenuInflater().inflate(R.menu.view_module, popupMenu.getMenu());
         popupMenu.getMenu().findItem(mViewModule == VIEW_MODULE_CARD ? R.id.menu_view_module_card : R.id.menu_view_module_list).setChecked(true);
@@ -133,14 +139,38 @@ public class DocumentsFragment extends Fragment {
     }
 
 
-    private void onMenuViewModuleList(MenuItem menuItem) {
+    private void onMenuItemSelectedViewModuleList(MenuItem menuItem) {
         menuItem.setChecked(true);
         setViewModule(VIEW_MODULE_DEFAULT);
     }
 
-    private void onMenuViewModuleCard(MenuItem menuItem) {
+    private void onMenuItemSelectedViewModuleCard(MenuItem menuItem) {
         menuItem.setChecked(true);
         setViewModule(VIEW_MODULE_CARD);
+    }
+
+    private void onMenuItemSelectedOrderModule(MenuItem menuItem) {
+        PopupMenu popupMenu = new PopupMenu(getContext(), mToolbar, Gravity.RIGHT);
+        popupMenu.getMenuInflater().inflate(R.menu.video_order_module, popupMenu.getMenu());
+        popupMenu.show();
+        popupMenu.setOnMenuItemClickListener(mMenuItemClickListener);
+        PopupMenuUtil.forceShowIcon(popupMenu, true);
+    }
+
+    private void onMenuItemSelectedOrderModuleByName(MenuItem menuItem) {
+        setVideoOderModule(new VideoNameComparator());
+    }
+
+    private void onMenuItemSelectedOrderModuleByDuration(MenuItem menuItem) {
+        setVideoOderModule(new VideoDurationComparator());
+    }
+
+    private void onMenuItemSelectedOrderModuleBySize(MenuItem menuItem) {
+        setVideoOderModule(new VideoSizeComparator());
+    }
+
+    private void onMenuItemSelectedOrderModuleByType(MenuItem menuItem) {
+        setVideoOderModule(new VideoTypeComparator());
     }
 
     private final View.OnClickListener mToolBarNavigationOnClickListener = new View.OnClickListener() {
@@ -182,23 +212,47 @@ public class DocumentsFragment extends Fragment {
         }
     }
 
+    /**
+     * 根据比较器排列数据
+     *
+     * @param comparator 比较器
+     */
+    private void setVideoOderModule(Comparator<? super VideoEntry> comparator) {
+        List<VideoEntry> datas = mAdapter.getDatas();
+        Collections.sort(datas, comparator);
+        mAdapter.notifyDataSetChanged();
+    }
+
     private final PopupMenu.OnMenuItemClickListener mMenuItemClickListener = new PopupMenu.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
-                case R.id.menu_view_module:
-                    onMenuViewModule(menuItem);
+                case R.id.menu_view_module:         // 视图模式
+                    onMenuItemSelectedViewModule(menuItem);
                     break;
-                case R.id.menu_view_module_list:
-                    onMenuViewModuleList(menuItem);
+                case R.id.menu_view_module_list:    // 视图模式 - 列表
+                    onMenuItemSelectedViewModuleList(menuItem);
                     break;
-                case R.id.menu_view_module_card:
-                    onMenuViewModuleCard(menuItem);
+                case R.id.menu_view_module_card:    // 视图模式 - 卡表
+                    onMenuItemSelectedViewModuleCard(menuItem);
+                    break;
+                case R.id.menu_order_module:        // 排列模式
+                    onMenuItemSelectedOrderModule(menuItem);
+                    break;
+                case R.id.menu_video_order_name:        // 排列模式 - 名称
+                    onMenuItemSelectedOrderModuleByName(menuItem);
+                    break;
+                case R.id.menu_video_order_duration:    // 排列模式 - 播放时长
+                    onMenuItemSelectedOrderModuleByDuration(menuItem);
+                    break;
+                case R.id.menu_video_order_size:        // 排列模式 - 大小
+                    onMenuItemSelectedOrderModuleBySize(menuItem);
+                    break;
+                case R.id.menu_video_order_type:        // 排列模式 - 类型
+                    onMenuItemSelectedOrderModuleByType(menuItem);
                     break;
             }
-            return false;
+            return true;
         }
-
-
     };
 }
