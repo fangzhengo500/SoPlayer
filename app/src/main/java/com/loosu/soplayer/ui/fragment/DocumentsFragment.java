@@ -147,7 +147,11 @@ public class DocumentsFragment extends Fragment {
     private void onMenuItemSelectedViewModule(MenuItem menuItem) {
         PopupMenu popupMenu = new PopupMenu(getContext(), mToolbar, Gravity.RIGHT);
         popupMenu.getMenuInflater().inflate(R.menu.view_module, popupMenu.getMenu());
-        popupMenu.getMenu().findItem(mViewModule == VIEW_MODULE_CARD ? R.id.menu_view_module_card : R.id.menu_view_module_list).setChecked(true);
+        popupMenu.getMenu()
+                .findItem(mViewModule == VIEW_MODULE_CARD ?
+                        R.id.menu_view_module_card :
+                        R.id.menu_view_module_list)
+                .setChecked(true);
         popupMenu.show();
         popupMenu.setOnMenuItemClickListener(mMenuItemClickListener);
         PopupMenuUtil.forceShowIcon(popupMenu, true);

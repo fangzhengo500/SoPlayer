@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:scaleType="centerCrop"
+            android:src="@drawable/video_card_default_drawable"
             tools:src="@color/rusty_red" />
 
         <LinearLayout

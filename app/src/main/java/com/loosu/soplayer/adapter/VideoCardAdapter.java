@@ -6,6 +6,7 @@ import android.text.format.Formatter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.adapter.base.recyclerview.RecyclerHolder;
 import com.loosu.soplayer.domain.VideoEntry;
@@ -14,6 +15,10 @@ import com.loosu.soplayer.utils.TimeUtil;
 import java.util.List;
 
 public class VideoCardAdapter extends DocumentVideoAdapter {
+    RequestOptions mOptions = new RequestOptions()
+            .error(R.drawable.video_card_default_drawable)
+            .placeholder(R.drawable.video_card_default_drawable);
+
     public VideoCardAdapter(@Nullable List<VideoEntry> datas) {
         super(datas);
     }
@@ -36,6 +41,7 @@ public class VideoCardAdapter extends DocumentVideoAdapter {
 
         Glide.with(holder.itemView)
                 .load(videoEntry.getData())
+                .apply(mOptions)
                 .into((ImageView) holder.getView(R.id.iv_cover));
     }
 }
