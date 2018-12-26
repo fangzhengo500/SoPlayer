@@ -11,6 +11,9 @@ import android.view.View;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.SystemUiUtil;
+import com.loosu.soplayer.widget.videoview.SoVideoView;
+
+import java.io.IOException;
 
 import tv.danmaku.ijk.media.exo.IjkExoMediaPlayer;
 
@@ -21,7 +24,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     private VideoEntry mVideo;
 
-    private TextureView mVideoView;
+    private SoVideoView mVideoView;
     private IjkExoMediaPlayer mPlayer;
 
     public static Intent getStartIntent(Context context, VideoEntry videoEntry) {
@@ -59,5 +62,14 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     public void onClick(View view) {
         SystemUiUtil.toggleHideyBar(this);
+        try {
+            mVideoView.setDataSource(mVideo.getData());
+            mVideoView.prepareAsync();
+            mVideoView.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

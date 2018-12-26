@@ -5,10 +5,12 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.FrameLayout;
 
+import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 
 import java.io.FileDescriptor;
@@ -33,6 +35,8 @@ public class SoVideoView extends FrameLayout implements IVideoView {
 
     public SoVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        LayoutInflater.from(context).inflate(R.layout.widget_so_video, this, true);
+        mSurfaceView = findViewById(R.id.surface);
         mSurfaceView.getHolder().addCallback(mSurfaceHolderCallback);
         mPlayer = new IjkMediaPlayer();
     }
@@ -85,5 +89,15 @@ public class SoVideoView extends FrameLayout implements IVideoView {
         return mPlayer.getDataSource();
     }
 
+    @Override
+    public void prepareAsync() {
+        mPlayer.prepareAsync();
+    }
 
+    @Override
+    public void start() {
+        mPlayer.start();
+        mPlayer.setLooping(true);
+        //mPlayer.setDisplay(mSurfaceView.getHolder());
+    }
 }
