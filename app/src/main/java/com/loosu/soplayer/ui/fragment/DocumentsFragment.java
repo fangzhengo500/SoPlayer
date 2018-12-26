@@ -37,9 +37,7 @@ import com.loosu.soplayer.widget.SoToolbar;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DocumentsFragment extends Fragment {
     private static final String TAG = "DocumentsFragment";
@@ -242,7 +240,7 @@ public class DocumentsFragment extends Fragment {
             DocumentVideoAdapter adapter = (DocumentVideoAdapter) parent.getAdapter();
             VideoEntry videoEntry = adapter.getItem(position);
 
-            Intent intent = new Intent(getContext(), VideoPlayerActivity.class);
+            Intent intent = VideoPlayerActivity.getStartIntent(getContext(), videoEntry);
             startActivity(intent);
         }
     };

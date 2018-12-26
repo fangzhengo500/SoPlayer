@@ -1,9 +1,11 @@
 package com.loosu.soplayer.domain;
 
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 
-public class VideoEntry {
+public class VideoEntry implements Parcelable {
 
     private String mTitle;
     private String mDisplayName;
@@ -32,6 +34,31 @@ public class VideoEntry {
         mHeight = cursor.getInt(cursor.getColumnIndex(MediaStore.Video.VideoColumns.HEIGHT));
         mWidth = cursor.getInt(cursor.getColumnIndex(MediaStore.Video.VideoColumns.WIDTH));
     }
+
+    protected VideoEntry(Parcel in) {
+        mTitle = in.readString();
+        mDisplayName = in.readString();
+        mData = in.readString();
+        mMimeType = in.readString();
+        mDuration = in.readLong();
+        mSize = in.readLong();
+        mDataAdded = in.readLong();
+        mDataModified = in.readLong();
+        mHeight = in.readInt();
+        mWidth = in.readInt();
+    }
+
+    public static final Creator<VideoEntry> CREATOR = new Creator<VideoEntry>() {
+        @Override
+        public VideoEntry createFromParcel(Parcel in) {
+            return new VideoEntry(in);
+        }
+
+        @Override
+        public VideoEntry[] newArray(int size) {
+            return new VideoEntry[size];
+        }
+    };
 
     public String getTitle() {
         return mTitle;
@@ -128,5 +155,24 @@ public class VideoEntry {
                 .append(" mDuration='").append(mDuration).append('\n')
                 .append('}')
                 .toString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mTitle);
+        dest.writeString(mDisplayName);
+        dest.writeString(mData);
+        dest.writeString(mMimeType);
+        dest.writeLong(mDuration);
+        dest.writeLong(mSize);
+        dest.writeLong(mDataAdded);
+        dest.writeLong(mDataModified);
+        dest.writeInt(mHeight);
+        dest.writeInt(mWidth);
     }
 }
