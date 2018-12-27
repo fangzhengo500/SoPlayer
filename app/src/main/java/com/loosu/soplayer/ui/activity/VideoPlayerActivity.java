@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.TextureView;
 import android.view.View;
 
 import com.loosu.soplayer.R;
@@ -15,7 +14,6 @@ import com.loosu.soplayer.widget.videoview.SoVideoView;
 
 import java.io.IOException;
 
-import tv.danmaku.ijk.media.exo.IjkExoMediaPlayer;
 
 public class VideoPlayerActivity extends AppCompatActivity {
     private static final String TAG = "VideoPlayerActivity";
@@ -25,7 +23,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private VideoEntry mVideo;
 
     private SoVideoView mVideoView;
-    private IjkExoMediaPlayer mPlayer;
 
     public static Intent getStartIntent(Context context, VideoEntry videoEntry) {
         Intent intent = new Intent(context, VideoPlayerActivity.class);
@@ -70,6 +67,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
+            mVideoView.stop();
         }
     }
 }
