@@ -6,7 +6,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ff6">
+        android:background="#555">
 
         <com.loosu.soplayer.widget.videoview.AutoFixSurfaceView
             android:id="@+id/surface_view"

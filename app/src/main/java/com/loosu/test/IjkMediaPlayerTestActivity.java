@@ -80,10 +80,16 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         updateInfo(mMediaPlayer);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mMediaPlayer.release();
+    }
+
     private void init(Bundle savedInstanceState) {
         Intent intent = getIntent();
         mVideo = intent.getParcelableExtra(KEY_VIDEO);
-
+        mVideo.setData("http://ivytest.i-weiying.com/5c85/video/20181215/201812152df873c5760be877437c9d1da6173b601544867186105.mp4?auth_key=1546027689-0-0-f1e95ae51cd502dec8311a6db91343b0");
         mMediaPlayer = new IjkMediaPlayer();
     }
 
@@ -346,6 +352,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             KLog.d(TAG, "holder = " + holder);
+            mMediaPlayer.stop();
             updateInfo(mMediaPlayer);
         }
     };
