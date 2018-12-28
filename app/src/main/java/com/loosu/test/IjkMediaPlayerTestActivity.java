@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.domain.VideoEntry;
@@ -23,7 +25,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         IMediaPlayer.OnPreparedListener, IMediaPlayer.OnErrorListener,
         IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnCompletionListener,
         IMediaPlayer.OnInfoListener, IMediaPlayer.OnSeekCompleteListener,
-        IMediaPlayer.OnTimedTextListener, IMediaPlayer.OnVideoSizeChangedListener, View.OnClickListener {
+        IMediaPlayer.OnTimedTextListener, IMediaPlayer.OnVideoSizeChangedListener, View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = "IjkMediaPlayerTestActiv";
     private static final String KEY_VIDEO = "VIDEO";
@@ -40,6 +42,8 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     private View mBtnStart;
     private View mBtnStop;
     private View mBtnPause;
+    private SeekBar mSeekBarVideoSeek;
+    private TextView mTvSeekValue;
 
     public static Intent getStartIntent(Context context, VideoEntry videoEntry) {
         Intent intent = new Intent(context, IjkMediaPlayerTestActivity.class);
@@ -62,6 +66,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         mVideo = intent.getParcelableExtra(KEY_VIDEO);
 
         mMediaPlayer = new IjkMediaPlayer();
+        mMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
     }
 
     private void findView(Bundle savedInstanceState) {
@@ -69,10 +74,13 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
 
         mBtnReset = findViewById(R.id.btn_reset);
         mBtnSetData = findViewById(R.id.btn_set_data);
-        mBtnPrepare =findViewById(R.id.btn_prepare);
+        mBtnPrepare = findViewById(R.id.btn_prepare);
         mBtnStart = findViewById(R.id.btn_start);
         mBtnStop = findViewById(R.id.btn_stop);
         mBtnPause = findViewById(R.id.btn_pause);
+
+        mSeekBarVideoSeek = findViewById(R.id.seek_bar_video_seek);
+        mTvSeekValue = findViewById(R.id.tv_seek_value);
     }
 
     private void initView(Bundle savedInstanceState) {
@@ -96,6 +104,8 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         mBtnStart.setOnClickListener(this);
         mBtnStop.setOnClickListener(this);
         mBtnPause.setOnClickListener(this);
+
+        mSeekBarVideoSeek.setOnSeekBarChangeListener(this);
     }
 
     @Override
@@ -128,6 +138,28 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        switch (seekBar.getId()) {
+            case R.id.seek_bar_video_seek:
+                mMediaPlayer.seekTo(seekBar.getProgress());
+                long currentPosition = mMediaPlayer.getCurrentPosition();
+                long duration = mMediaPlayer.getDuration();
+                mTvSeekValue.setText(String.valueOf(currentPosition + "/" + duration));
+                break;
+        }
+    }
+
+    @Override
     public void onBufferingUpdate(IMediaPlayer mp, int percent) {
         KLog.w(TAG, "percent = " + percent);
     }
@@ -139,19 +171,24 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
 
     @Override
     public boolean onError(IMediaPlayer mp, int what, int extra) {
-        KLog.w(TAG, "what = " + IjkMediaPlayerUtil.errorToString(what) + ", extra = " + extra);
+        KLog.w(TAG, "what = " + IjkMediaPlayerUtil.errorToString(getApplicationContext(), what) + ", extra = " + extra);
         return false;
     }
 
     @Override
     public boolean onInfo(IMediaPlayer mp, int what, int extra) {
-        KLog.w(TAG, "what = " + IjkMediaPlayerUtil.infoToString(what) + ", extra = " + extra);
+        KLog.w(TAG, "what = " + IjkMediaPlayerUtil.infoToString(getApplicationContext(), what) + ", extra = " + extra);
         return false;
     }
 
     @Override
     public void onPrepared(IMediaPlayer mp) {
         KLog.w(TAG, "");
+        long currentPosition = mp.getCurrentPosition();
+        long duration = mp.getDuration();
+        mTvSeekValue.setText(String.valueOf(currentPosition + "/" + duration));
+        mSeekBarVideoSeek.setProgress((int) currentPosition);
+        mSeekBarVideoSeek.setMax((int) duration);
     }
 
 

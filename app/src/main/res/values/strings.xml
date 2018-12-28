@@ -19,4 +19,38 @@
     <string name="menu_video_order_duration">播放时长</string>
     <string name="menu_video_order_size">大小</string>
     <string name="menu_video_order_type">类型</string>
+
+    <!-- media info -->
+    <string name="media_info_unknown">未知信息</string>
+    <string name="media_info_started_as_next">media info 从下一个开始</string>
+    <string name="media_info_video_rendering_start">开始渲染第一帧</string>
+    <string name="media_info_video_track_lagging">视频过于复杂解码太慢</string>
+    <string name="media_info_buffering_start">暂停播放开始缓冲更多数据</string>
+    <string name="media_info_buffering_end">缓冲了足够的数据重新开始播放</string>
+    <string name="media_info_network_bandwidth">media info 网络带宽</string>
+    <string name="media_info_bad_interleaving">错误交叉</string>
+    <string name="media_info_not_seekable">媒体不能够搜索</string>
+    <string name="media_info_metadata_update">一组新的元数据用</string>
+    <string name="media_info_timed_text_error">定时文本错误</string>
+    <string name="media_info_unsupported_subtitle">不支持字幕</string>
+    <string name="media_info_subtitle_timed_out">读取字幕使用时间过长</string>
+    <string name="media_info_video_rotation_changed">视频以旋转</string>
+    <string name="media_info_audio_rendering_start">音频渲染开始</string>
+    <string name="media_info_audio_decoded_start">视频音频解码开始</string>
+    <string name="media_info_video_decoded_start">视频解码开始</string>
+    <string name="media_info_open_input">开始输入</string>
+    <string name="media_info_find_stream_info">找到流信息</string>
+    <string name="media_info_component_open">组件打开</string>
+    <string name="media_info_video_seek_rendering_start">视频搜索渲染开始</string>
+    <string name="media_info_audio_seek_rendering_start">音频搜索渲染开始</string>
+    <string name="media_info_media_accurate_seek_complete">准确seek完成</string>
+
+    <!-- media error -->
+    <string name="media_error_unknown">未知错误</string>
+    <string name="media_error_server_died">服务器错误</string>
+    <string name="media_error_not_valid_for_progressive_playback">视频流及其容器不适用于连续播放视频的指标</string>
+    <string name="media_error_io">文件不存/网络不可访问错误</string>
+    <string name="media_error_malformed">流不符合有关标准或文件的编码规范</string>
+    <string name="media_error_unsupported">比特流符合相关编码标准或文件的规格，但媒体框架不支持此功能</string>
+    <string name="media_error_timed_out">超时错误</string>
 </resources>
