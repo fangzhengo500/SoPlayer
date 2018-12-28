@@ -41,7 +41,7 @@
     <string name="media_info_open_input">开始输入</string>
     <string name="media_info_find_stream_info">找到流信息</string>
     <string name="media_info_component_open">组件打开</string>
-    <string name="media_info_video_seek_rendering_start">视频搜索渲染开始</string>
+    <string name="media_info_video_seek_rendering_start">开始渲染第seek帧</string>
     <string name="media_info_audio_seek_rendering_start">音频搜索渲染开始</string>
     <string name="media_info_media_accurate_seek_complete">准确seek完成</string>
 
