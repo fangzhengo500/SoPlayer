@@ -29,6 +29,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         IMediaPlayer.OnBufferingUpdateListener, IMediaPlayer.OnCompletionListener,
         IMediaPlayer.OnInfoListener, IMediaPlayer.OnSeekCompleteListener,
         IMediaPlayer.OnTimedTextListener, IMediaPlayer.OnVideoSizeChangedListener,
+        IjkMediaPlayer.OnNativeInvokeListener,
         View.OnClickListener, SeekBar.OnSeekBarChangeListener,
         CompoundButton.OnCheckedChangeListener {
 
@@ -130,7 +131,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         mMediaPlayer.setOnSeekCompleteListener(IjkMediaPlayerTestActivity.this);
         mMediaPlayer.setOnTimedTextListener(IjkMediaPlayerTestActivity.this);
         mMediaPlayer.setOnVideoSizeChangedListener(IjkMediaPlayerTestActivity.this);
-
+        mMediaPlayer.setOnNativeInvokeListener(this);   //断网重连必须实现
         mSurfaceView.getHolder().addCallback(mCallback2);
 
         mToggleScreenOnWhilePlaying.setOnCheckedChangeListener(this);
@@ -290,6 +291,11 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         updateInfo(mMediaPlayer);
     }
 
+    @Override
+    public boolean onNativeInvoke(int what, Bundle args) {
+        KLog.w(TAG, "what = " + what + ", args = " + args);
+        return false;
+    }
 
     private void updateInfo(IMediaPlayer mp) {
         mTvPlayerState.setText("player state : " + mPlayerState);

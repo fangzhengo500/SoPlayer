@@ -29,7 +29,7 @@
     <string name="media_info_buffering_end">缓冲了足够的数据重新开始播放</string>
     <string name="media_info_network_bandwidth">media info 网络带宽</string>
     <string name="media_info_bad_interleaving">错误交叉</string>
-    <string name="media_info_not_seekable">媒体不能够搜索</string>
+    <string name="media_info_not_seekable">不可seek</string>
     <string name="media_info_metadata_update">一组新的元数据用</string>
     <string name="media_info_timed_text_error">定时文本错误</string>
     <string name="media_info_unsupported_subtitle">不支持字幕</string>
@@ -41,8 +41,8 @@
     <string name="media_info_open_input">开始输入</string>
     <string name="media_info_find_stream_info">找到流信息</string>
     <string name="media_info_component_open">组件打开</string>
-    <string name="media_info_video_seek_rendering_start">开始渲染第seek帧</string>
-    <string name="media_info_audio_seek_rendering_start">音频搜索渲染开始</string>
+    <string name="media_info_video_seek_rendering_start">开始渲染视频第seek帧</string>
+    <string name="media_info_audio_seek_rendering_start">开始渲染音频第seek帧</string>
     <string name="media_info_media_accurate_seek_complete">准确seek完成</string>
 
     <!-- media error -->
