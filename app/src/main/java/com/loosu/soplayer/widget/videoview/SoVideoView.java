@@ -39,6 +39,7 @@ public class SoVideoView extends FrameLayout implements IVideoView {
         LayoutInflater.from(context).inflate(R.layout.widget_so_video, this, true);
         mSurfaceView = findViewById(R.id.surface);
         mSurfaceView.getHolder().addCallback(mSurfaceHolderCallback);
+
         mPlayer = new IjkMediaPlayer();
         mPlayer.setOnPreparedListener(mIjkMediaPlayerListener);
         mPlayer.setOnErrorListener(mIjkMediaPlayerListener);
@@ -48,6 +49,7 @@ public class SoVideoView extends FrameLayout implements IVideoView {
         mPlayer.setOnSeekCompleteListener(mIjkMediaPlayerListener);
         mPlayer.setOnTimedTextListener(mIjkMediaPlayerListener);
         mPlayer.setOnVideoSizeChangedListener(mIjkMediaPlayerListener);
+        mPlayer.setScreenOnWhilePlaying(true);
     }
 
     private SurfaceHolder.Callback2 mSurfaceHolderCallback = new SurfaceHolder.Callback2() {
@@ -70,27 +72,37 @@ public class SoVideoView extends FrameLayout implements IVideoView {
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             KLog.w("holder = " + holder);
+            mPlayer.stop();
         }
     };
 
     @Override
     public void setDataSource(Context context, Uri uri) throws IOException {
+        //mPlayer.release();
         mPlayer.setDataSource(context, uri);
+        mPlayer.prepareAsync();
     }
+
 
     @Override
     public void setDataSource(Context context, Uri uri, Map<String, String> headers) throws IOException {
+        //mPlayer.release();
         mPlayer.setDataSource(context, uri, headers);
+        mPlayer.prepareAsync();
     }
 
     @Override
     public void setDataSource(FileDescriptor fd) throws IOException {
+        //mPlayer.release();
         mPlayer.setDataSource(fd);
+        mPlayer.prepareAsync();
     }
 
     @Override
     public void setDataSource(String path) throws IOException {
+        //mPlayer.release();
         mPlayer.setDataSource(path);
+        mPlayer.prepareAsync();
     }
 
     @Override
@@ -99,14 +111,14 @@ public class SoVideoView extends FrameLayout implements IVideoView {
     }
 
     @Override
-    public void prepareAsync() {
-        mPlayer.prepareAsync();
-    }
-
-    @Override
     public void start() {
         mPlayer.start();
-        mPlayer.setLooping(true);
+    }
+
+    public void stop() {
+        if (mPlayer.isPlaying()) {
+            mPlayer.stop();
+        }
     }
 
     private IjkMediaPlayerComponentListener mIjkMediaPlayerListener = new IjkMediaPlayerComponentListener() {
@@ -151,11 +163,7 @@ public class SoVideoView extends FrameLayout implements IVideoView {
         public void onVideoSizeChanged(IMediaPlayer mp, int width, int height,
                                        int sar_num, int sar_den) {
             KLog.d(TAG, "width = " + width + ", height = " + height + ", sar_num = " + sar_num + ", sar_den = " + sar_den);
-            mSurfaceView.setAspectRatio(width,height);
+            mSurfaceView.setAspectRatio(width, height);
         }
     };
-
-    public void stop() {
-        mPlayer.stop();
-    }
 }

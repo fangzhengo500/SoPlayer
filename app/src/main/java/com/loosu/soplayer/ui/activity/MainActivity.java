@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.loosu.soplayer.R;
+import com.loosu.test.IjkMediaPlayerTestActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,7 +46,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onClickBtnSettings() {
-
+        Intent intent = new Intent(this, IjkMediaPlayerTestActivity.class);
+        startActivity(intent);
     }
 
     private final View.OnClickListener mOnClickListener = new View.OnClickListener() {

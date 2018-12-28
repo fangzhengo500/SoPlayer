@@ -34,6 +34,7 @@ import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.PopupMenuUtil;
 import com.loosu.soplayer.utils.SystemUiUtil;
 import com.loosu.soplayer.widget.SoToolbar;
+import com.loosu.test.IjkMediaPlayerTestActivity;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -240,7 +241,7 @@ public class DocumentsFragment extends Fragment {
             DocumentVideoAdapter adapter = (DocumentVideoAdapter) parent.getAdapter();
             VideoEntry videoEntry = adapter.getItem(position);
 
-            Intent intent = VideoPlayerActivity.getStartIntent(getContext(), videoEntry);
+            Intent intent = IjkMediaPlayerTestActivity.getStartIntent(getContext(), videoEntry);
             startActivity(intent);
         }
     };

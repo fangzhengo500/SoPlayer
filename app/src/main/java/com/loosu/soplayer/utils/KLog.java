@@ -127,7 +127,7 @@ public class KLog {
                 Log.i(tag, logStr);
                 break;
             case W:
-                Log.d(tag, logStr);
+                Log.w(tag, logStr);
                 break;
             case E:
                 Log.e(tag, logStr);

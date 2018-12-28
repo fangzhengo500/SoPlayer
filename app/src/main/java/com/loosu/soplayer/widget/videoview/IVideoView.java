@@ -20,7 +20,5 @@ public interface IVideoView {
 
     public String getDataSource();
 
-    public void prepareAsync();
-
     public void start();
 }

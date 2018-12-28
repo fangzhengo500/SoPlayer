@@ -61,7 +61,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
         SystemUiUtil.toggleHideyBar(this);
         try {
             mVideoView.setDataSource(mVideo.getData());
-            mVideoView.prepareAsync();
             mVideoView.start();
         } catch (IOException e) {
             e.printStackTrace();
