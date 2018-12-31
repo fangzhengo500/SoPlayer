@@ -63,6 +63,13 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     private TextView mTvSeekValue;
     private View mBtnRelease;
 
+    private SeekBar mSeekBarLeftVolume;
+    private TextView mTvLeftVolumeValue;
+
+    private SeekBar mSeekBarRightVolume;
+    private TextView mTvRightVolumeValue;
+    private TextView mTvPlayable;
+
     public static Intent getStartIntent(Context context, VideoEntry videoEntry) {
         Intent intent = new Intent(context, IjkMediaPlayerTestActivity.class);
         intent.putExtra(KEY_VIDEO, videoEntry);
@@ -90,13 +97,14 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     private void init(Bundle savedInstanceState) {
         Intent intent = getIntent();
         mVideo = intent.getParcelableExtra(KEY_VIDEO);
-        mVideo.setData("http://ivytest.i-weiying.com/5c85/video/20181215/201812152df873c5760be877437c9d1da6173b601544867186105.mp4?auth_key=1546027689-0-0-f1e95ae51cd502dec8311a6db91343b0");
+        mVideo.setData(mVideo.getData());
         mMediaPlayer = new IjkMediaPlayer();
     }
 
     private void findView(Bundle savedInstanceState) {
         mSurfaceView = findViewById(R.id.surface_view);
 
+        mTvPlayable = findViewById(R.id.tv_playable);
         mTvPlayerState = findViewById(R.id.tv_player_state);
         mTvDataSource = findViewById(R.id.tv_data_source);
         mTvVideoSize = findViewById(R.id.tv_video_size);
@@ -117,6 +125,12 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
 
         mSeekBarVideoSeek = findViewById(R.id.seek_bar_video_seek);
         mTvSeekValue = findViewById(R.id.tv_seek_value);
+
+        mSeekBarLeftVolume = findViewById(R.id.seek_bar_left_volume);
+        mTvLeftVolumeValue = findViewById(R.id.tv_left_volume_value);
+
+        mSeekBarRightVolume = findViewById(R.id.seek_bar_right_volume);
+        mTvRightVolumeValue = findViewById(R.id.tv_right_volume_value);
     }
 
     private void initView(Bundle savedInstanceState) {
@@ -146,6 +160,8 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         mBtnRelease.setOnClickListener(this);
 
         mSeekBarVideoSeek.setOnSeekBarChangeListener(this);
+        mSeekBarLeftVolume.setOnSeekBarChangeListener(this);
+        mSeekBarRightVolume.setOnSeekBarChangeListener(this);
     }
 
     @Override
@@ -207,7 +223,23 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+        switch (seekBar.getId()) {
+            case R.id.seek_bar_video_seek:
+                mMediaPlayer.seekTo(seekBar.getProgress());
+                long currentPosition = mMediaPlayer.getCurrentPosition();
+                long duration = mMediaPlayer.getDuration();
+                mTvSeekValue.setText(String.valueOf(currentPosition + "/" + duration));
+                break;
+            case R.id.seek_bar_left_volume:
+            case R.id.seek_bar_right_volume:
+                float leftVolume = mSeekBarLeftVolume.getProgress() * 1f / mSeekBarLeftVolume.getMax();
+                float rightVolume = mSeekBarRightVolume.getProgress() * 1f / mSeekBarRightVolume.getMax();
+                mMediaPlayer.setVolume(leftVolume, rightVolume);
+                mTvLeftVolumeValue.setText(String.format("%.2f", leftVolume));
+                mTvRightVolumeValue.setText(String.format("%.2f", rightVolume));
+                break;
+        }
+        updateInfo(mMediaPlayer);
     }
 
     @Override
@@ -217,15 +249,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        switch (seekBar.getId()) {
-            case R.id.seek_bar_video_seek:
-                mMediaPlayer.seekTo(seekBar.getProgress());
-                long currentPosition = mMediaPlayer.getCurrentPosition();
-                long duration = mMediaPlayer.getDuration();
-                mTvSeekValue.setText(String.valueOf(currentPosition + "/" + duration));
-                break;
-        }
-        updateInfo(mMediaPlayer);
+
     }
 
     @Override
@@ -298,7 +322,12 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     }
 
     private void updateInfo(IMediaPlayer mp) {
-        mTvPlayerState.setText("player state : " + mPlayerState);
+        try {
+            mTvPlayable.setText("playable : " + mp.isPlaying());
+        } catch (Exception e) {
+            e.printStackTrace();
+            mTvDataSource.setText("playable : can not get info");
+        }
         try {
             mTvDataSource.setText("data source: " + mp.getDataSource());
         } catch (Exception e) {

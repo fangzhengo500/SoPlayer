@@ -21,6 +21,12 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_playable"
+                android:textColor="@color/text_color_white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
                 android:id="@+id/tv_player_state"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -197,6 +203,65 @@
 
             <TextView
                 android:id="@+id/tv_seek_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="#66f"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="Left_Vol" />
+
+            <SeekBar
+                android:id="@+id/seek_bar_left_volume"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"
+                android:padding="10dp" />
+
+            <TextView
+                android:id="@+id/tv_left_volume_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="#66f"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="Right_Vol" />
+
+            <SeekBar
+                android:id="@+id/seek_bar_right_volume"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"
+                android:padding="10dp" />
+
+            <TextView
+                android:id="@+id/tv_right_volume_value"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
