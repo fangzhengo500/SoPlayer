@@ -326,7 +326,13 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
             mTvPlayable.setText("playable : " + mp.isPlaying());
         } catch (Exception e) {
             e.printStackTrace();
-            mTvDataSource.setText("playable : can not get info");
+            mTvPlayable.setText("playable : can not get info");
+        }
+        try {
+            mTvPlayerState.setText("playable : " + mPlayerState);
+        } catch (Exception e) {
+            e.printStackTrace();
+            mTvPlayerState.setText("playable : IDLE");
         }
         try {
             mTvDataSource.setText("data source: " + mp.getDataSource());
