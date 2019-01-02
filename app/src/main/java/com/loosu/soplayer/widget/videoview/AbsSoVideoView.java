@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.widget.FrameLayout;
 
+import com.loosu.soplayer.utils.IjkMediaPlayerUtil;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.PixelFormatUtil;
 
@@ -15,11 +16,12 @@ import java.io.IOException;
 import java.util.Locale;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
+import tv.danmaku.ijk.media.player.IjkTimedText;
 
 public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
     private static final String TAG = "AbsSoVideoView";
 
-    private PlayerState mState;
+    private PlayerState mState = PlayerState.IDLE;
 
     public AbsSoVideoView(@NonNull Context context) {
         super(context);
@@ -37,6 +39,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
     protected void onAttachedToWindow() {
         KLog.d(TAG, "");
         super.onAttachedToWindow();
+        initPlayer();
         iniSurface();
     }
 
@@ -89,7 +92,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
         if (getMediaPlayer() != null) {
             try {
                 getMediaPlayer().prepareAsync();
-            }catch (IllegalStateException e){
+            } catch (IllegalStateException e) {
                 e.printStackTrace();
             }
         }
@@ -116,10 +119,45 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
         }
     }
 
+    private void initPlayer() {
+        IMediaPlayer player = getMediaPlayer();
+        player.setOnPreparedListener(mPlayerComponentListener);
+        player.setOnErrorListener(mPlayerComponentListener);
+        player.setOnBufferingUpdateListener(mPlayerComponentListener);
+        player.setOnCompletionListener(mPlayerComponentListener);
+        player.setOnInfoListener(mPlayerComponentListener);
+        player.setOnSeekCompleteListener(mPlayerComponentListener);
+        player.setOnTimedTextListener(mPlayerComponentListener);
+        player.setOnVideoSizeChangedListener(mPlayerComponentListener);
+    }
+
     protected void iniSurface() {
         if (getSurfaceHolder() != null) {
             getSurfaceHolder().addCallback(mSurfaceCallback);
         }
+    }
+
+    protected void onListenedBufferingUpdate(IMediaPlayer mp, int percent) {
+    }
+
+    protected void onListenedCompletion(IMediaPlayer mp) {
+    }
+
+    protected boolean onListenedError(IMediaPlayer mp, int what, int extra) {
+        return false;
+    }
+
+    protected boolean onListenedInfo(IMediaPlayer mp, int what, int extra) {
+        return false;
+    }
+
+    protected void onListenedPrepared(IMediaPlayer mp) {
+    }
+
+    protected void onListenedSeekComplete(IMediaPlayer mp) {
+    }
+
+    protected void onListenedVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
     }
 
     private final SurfaceHolder.Callback2 mSurfaceCallback = new SurfaceHolder.Callback2() {
@@ -148,6 +186,57 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
             if (getMediaPlayer() != null) {
                 getMediaPlayer().release();
             }
+        }
+    };
+
+    private final IjkMediaPlayerComponentListener mPlayerComponentListener = new IjkMediaPlayerComponentListener() {
+
+        @Override
+        public void onBufferingUpdate(IMediaPlayer mp, int percent) {
+            KLog.w(TAG, "percent = " + percent);
+            onListenedBufferingUpdate(mp, percent);
+        }
+
+        @Override
+        public void onCompletion(IMediaPlayer mp) {
+            KLog.w(TAG, "");
+            onListenedCompletion(mp);
+        }
+
+        @Override
+        public boolean onError(IMediaPlayer mp, int what, int extra) {
+            KLog.w(TAG, "what = " + IjkMediaPlayerUtil.errorToString(getContext(), what) + ", extra = " + extra);
+            return onListenedError(mp, what, extra);
+        }
+
+        @Override
+        public boolean onInfo(IMediaPlayer mp, int what, int extra) {
+            KLog.w(TAG, "what = " + IjkMediaPlayerUtil.infoToString(getContext(), what) + ", extra = " + extra);
+            return onListenedInfo(mp, what, extra);
+        }
+
+        @Override
+        public void onPrepared(IMediaPlayer mp) {
+            KLog.w(TAG, "");
+            onListenedPrepared(mp);
+        }
+
+
+        @Override
+        public void onSeekComplete(IMediaPlayer mp) {
+            KLog.d(TAG, "");
+            onListenedSeekComplete(mp);
+        }
+
+        @Override
+        public void onTimedText(IMediaPlayer mp, IjkTimedText text) {
+            KLog.w(TAG, "text = " + text);
+        }
+
+        @Override
+        public void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
+            KLog.w(TAG, "width = " + width + ", height = " + height + ", sar_num = " + sar_num + ", sar_den = " + sar_den);
+            onListenedVideoSizeChanged(mp, width, height, sar_num, sar_den);
         }
     };
 }

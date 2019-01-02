@@ -2,6 +2,8 @@ package com.loosu.test.videoview;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -48,7 +50,22 @@ public class VideoViewTestFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         KLog.d(TAG, "view = " + view + ", savedInstanceState = " + savedInstanceState);
         mVideoView = view.findViewById(R.id.video_view);
-        mVideoView.setOnClickListener(mClickListener);
+        // mVideoView.setOnClickListener(mClickListener);
+        mVideoView.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (getArguments() != null) {
+                        Bundle bundle = getArguments();
+                        mVideo = bundle.getParcelable(KEY_VIDEO);
+                        mVideoView.setDataSource(mVideo.getData());
+                    }
+                    mVideoView.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -61,7 +78,6 @@ public class VideoViewTestFragment extends Fragment {
     public void onStart() {
         KLog.d(TAG, "");
         super.onStart();
-        //mVideoView.start();
     }
 
     @Override
@@ -104,13 +120,14 @@ public class VideoViewTestFragment extends Fragment {
         @Override
         public void onClick(View v) {
             try {
-                //mVideoView.setDataSource("http://ivytest.i-weiying.com/74ba/video/20181222/20181222cceea418d72ed7ba9af883349500cba91545449583751.mp4?auth_key=1546414425-0-0-1620ba10b74f9e1cbade437b10b6f426");
+                mVideoView.setDataSource("http://ivytest.i-weiying.com/74ba/video/20181222/20181222cceea418d72ed7ba9af883349500cba91545449583751.mp4?auth_key=1546421228-0-0-9b8044233c8ef44e0b875a87366166bb");
                 if (getArguments() != null) {
                     Bundle bundle = getArguments();
                     mVideo = bundle.getParcelable(KEY_VIDEO);
                     mVideoView.setDataSource(mVideo.getData());
-                    mVideoView.start();
                 }
+                mVideoView.start();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
