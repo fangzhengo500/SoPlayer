@@ -24,9 +24,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.activity.MediaExplorerActivity" />
+        <activity android:name=".ui.activity.SettingActivity" />
         <activity android:name=".ui.activity.VideoPlayerActivity" />
         <activity
-            android:name="com.loosu.test.IjkMediaPlayerTestActivity"
+            android:name="com.loosu.test.ijk.IjkMediaPlayerTestActivity"
             android:theme="@style/Theme.AppCompat" />
+        <activity android:name="com.loosu.test.videoview.VideoViewTestActivity" />
     </application>
 </manifest>

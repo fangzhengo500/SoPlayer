@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,13 +27,13 @@ import com.loosu.soplayer.business.comparator.VideoNameComparator;
 import com.loosu.soplayer.business.comparator.VideoSizeComparator;
 import com.loosu.soplayer.business.comparator.VideoTypeComparator;
 import com.loosu.soplayer.domain.VideoEntry;
-import com.loosu.soplayer.ui.activity.VideoPlayerActivity;
 import com.loosu.soplayer.utils.DataHelper;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.PopupMenuUtil;
 import com.loosu.soplayer.utils.SystemUiUtil;
 import com.loosu.soplayer.widget.SoToolbar;
-import com.loosu.test.IjkMediaPlayerTestActivity;
+import com.loosu.test.ijk.IjkMediaPlayerTestActivity;
+import com.loosu.test.videoview.VideoViewTestActivity;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -241,7 +240,8 @@ public class DocumentsFragment extends Fragment {
             DocumentVideoAdapter adapter = (DocumentVideoAdapter) parent.getAdapter();
             VideoEntry videoEntry = adapter.getItem(position);
 
-            Intent intent = IjkMediaPlayerTestActivity.getStartIntent(getContext(), videoEntry);
+            Intent intent = VideoViewTestActivity.getStartIntent(getContext(), videoEntry);
+            //Intent intent = IjkMediaPlayerTestActivity.getStartIntent(getContext(), videoEntry);
             startActivity(intent);
         }
     };

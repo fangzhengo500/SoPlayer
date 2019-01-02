@@ -1,4 +1,4 @@
-package com.loosu.test;
+package com.loosu.soplayer.utils;
 
 
 import android.content.Context;

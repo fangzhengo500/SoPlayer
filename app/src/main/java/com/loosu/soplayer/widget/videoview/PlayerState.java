@@ -1,4 +1,4 @@
-package com.loosu.soplayer.domain;
+package com.loosu.soplayer.widget.videoview;
 
 public enum PlayerState {
     IDLE,

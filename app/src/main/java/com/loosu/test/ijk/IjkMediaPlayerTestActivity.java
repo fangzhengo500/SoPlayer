@@ -1,4 +1,4 @@
-package com.loosu.test;
+package com.loosu.test.ijk;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,9 +13,11 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.loosu.soplayer.R;
-import com.loosu.soplayer.domain.PlayerState;
+import com.loosu.soplayer.widget.videoview.PlayerState;
 import com.loosu.soplayer.domain.VideoEntry;
+import com.loosu.soplayer.utils.IjkMediaPlayerUtil;
 import com.loosu.soplayer.utils.KLog;
+import com.loosu.soplayer.utils.PixelFormatUtil;
 import com.loosu.soplayer.widget.videoview.AutoFixSurfaceView;
 
 import java.io.IOException;
