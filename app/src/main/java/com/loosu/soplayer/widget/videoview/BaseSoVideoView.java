@@ -9,6 +9,7 @@ import android.view.SurfaceHolder;
 
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
+import com.loosu.soplayer.widget.videoview.controller.Controller;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -19,6 +20,8 @@ public class BaseSoVideoView extends AbsSoVideoView {
     private IMediaPlayer mPlayer = new IjkMediaPlayer();
 
     private AutoFixSurfaceView mSurfaceView;
+
+    private Controller mController;
 
     public BaseSoVideoView(@NonNull Context context) {
         this(context, null);
@@ -34,6 +37,9 @@ public class BaseSoVideoView extends AbsSoVideoView {
         init(context, attrs, defStyleAttr);
         LayoutInflater.from(context).inflate(getLayoutId(), this, true);
         mSurfaceView = findViewById(R.id.surface_view);
+
+        mController = new Controller(context);
+        addView(mController);
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {

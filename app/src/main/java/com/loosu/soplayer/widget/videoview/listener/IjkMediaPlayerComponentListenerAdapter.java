@@ -1,4 +1,4 @@
-package com.loosu.soplayer.widget.videoview;
+package com.loosu.soplayer.widget.videoview.listener;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
