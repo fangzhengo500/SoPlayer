@@ -40,6 +40,7 @@ public class Controller extends FrameLayout {
         mPlayer = player;
 
         setProgress();
+        mShowProgress.run();
     }
 
     private void setProgress() {
@@ -96,7 +97,7 @@ public class Controller extends FrameLayout {
 
         @Override
         public void onStartTrackingTouch(SeekBar seekBar) {
-
+            removeCallbacks(mShowProgress);
         }
 
         @Override
@@ -107,16 +108,28 @@ public class Controller extends FrameLayout {
 
             long duration = mPlayer.getDuration();
             float percent = mProgress.getProgress() * 1f / mProgress.getMax();
-            long newposition = (long) (duration * percent);
-            mPlayer.seeKTo((int) newposition);
+            long newPosition = (long) (duration * percent);
+            mPlayer.seeKTo((int) newPosition);
             if (mTvCurrentPosition != null) {
-                mTvCurrentPosition.setText(TimeUtil.formatDuration(newposition));
+                mTvCurrentPosition.setText(TimeUtil.formatDuration(newPosition));
             }
         }
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             setProgress();
+            updateBtnPauseOrResume();
+            post(mShowProgress);
+        }
+    };
+
+    private final Runnable mShowProgress = new Runnable() {
+        @Override
+        public void run() {
+            setProgress();
+
+            removeCallbacks(mShowProgress);
+            postDelayed(mShowProgress, 1000);
         }
     };
 }

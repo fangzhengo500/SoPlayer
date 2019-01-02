@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/ripple_color">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
-        <layer-list>
+        <ripple android:color="@color/ripple_color">
             <item>
                 <shape android:shape="oval">
                     <solid android:color="#8fff" />
                 </shape>
             </item>
-            <item>
-                <inset android:inset="12%">
-                    <bitmap android:src="@drawable/ic_action_pause" />
-                </inset>
-            </item>
-        </layer-list>
+        </ripple>
     </item>
-</ripple>
+    <item>
+        <inset android:inset="15%">
+            <bitmap android:src="@drawable/ic_action_pause" />
+        </inset>
+    </item>
+</layer-list>
