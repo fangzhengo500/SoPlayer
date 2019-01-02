@@ -32,7 +32,6 @@ import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.PopupMenuUtil;
 import com.loosu.soplayer.utils.SystemUiUtil;
 import com.loosu.soplayer.widget.SoToolbar;
-import com.loosu.test.ijk.IjkMediaPlayerTestActivity;
 import com.loosu.test.videoview.VideoViewTestActivity;
 
 import java.util.Collections;

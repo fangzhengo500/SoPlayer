@@ -10,14 +10,17 @@ import android.view.SurfaceHolder;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.widget.videoview.controller.Controller;
+import com.loosu.soplayer.widget.videoview.controller.IMediaController;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class BaseSoVideoView extends AbsSoVideoView {
+public class BaseSoVideoView extends AbsSoVideoView implements IMediaController {
     private static final String TAG = "BaseSoVideoView";
 
     private IMediaPlayer mPlayer = new IjkMediaPlayer();
+
+    private float mBufferPercentage;
 
     private AutoFixSurfaceView mSurfaceView;
 
@@ -39,6 +42,8 @@ public class BaseSoVideoView extends AbsSoVideoView {
         mSurfaceView = findViewById(R.id.surface_view);
 
         mController = new Controller(context);
+        mController.setMediaPlayer(this);
+
         addView(mController);
     }
 
@@ -63,5 +68,40 @@ public class BaseSoVideoView extends AbsSoVideoView {
     @Override
     protected void onListenedVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
         mSurfaceView.setAspectRatio(width, height);
+    }
+
+    @Override
+    protected void onListenedBufferingUpdate(IMediaPlayer mp, int percent) {
+        mBufferPercentage = percent;
+    }
+
+    @Override
+    public void start() {
+        super.start();
+    }
+
+    @Override
+    public long getDuration() {
+        return mPlayer.getDuration();
+    }
+
+    @Override
+    public long getCurrentPosition() {
+        return mPlayer.getCurrentPosition();
+    }
+
+    @Override
+    public float getBufferPercentage() {
+        return mBufferPercentage;
+    }
+
+    @Override
+    public void seeKTo(int position) {
+        mPlayer.seekTo(position);
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return mPlayer.isPlaying();
     }
 }

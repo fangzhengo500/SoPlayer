@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import com.loosu.soplayer.utils.IjkMediaPlayerUtil;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.PixelFormatUtil;
+import com.loosu.soplayer.widget.videoview.controller.IMediaController;
 import com.loosu.soplayer.widget.videoview.listener.IjkMediaPlayerComponentListener;
 
 import java.io.IOException;
