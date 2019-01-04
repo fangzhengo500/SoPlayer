@@ -11,19 +11,19 @@ import android.widget.FrameLayout;
 import com.loosu.soplayer.utils.IjkMediaPlayerUtil;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.PixelFormatUtil;
-import com.loosu.soplayer.widget.videoview.controller.IMediaController;
+import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
+import com.loosu.soplayer.widget.videoview.interfaces.IVideoView;
 import com.loosu.soplayer.widget.videoview.listener.IjkMediaPlayerComponentListener;
 
-import java.io.IOException;
 import java.util.Locale;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 
-public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
+public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, IMediaController {
     private static final String TAG = "AbsSoVideoView";
 
-    private PlayerState mState = PlayerState.IDLE;
+    private IMediaController.State mState = IMediaController.State.IDLE;
 
     public AbsSoVideoView(@NonNull Context context) {
         super(context);
@@ -55,32 +55,43 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
 
     protected abstract SurfaceHolder getSurfaceHolder();
 
-    public PlayerState getState() {
+    @Override
+    public IMediaController.State getState() {
         return mState;
     }
 
-    private void setState(PlayerState state) {
+    private void setState(IMediaController.State state) {
+        KLog.e(TAG, "state = " + state);
         mState = state;
     }
 
     @Override
-    public void setDataSource(Context context, Uri uri) throws IOException {
+    public void setDataSource(Context context, Uri uri) {
         final IMediaPlayer player = getMediaPlayer();
-        if (player != null) {
+        try {
             player.reset();
             player.setDisplay(getSurfaceHolder());
             player.setDataSource(context, uri);
+
+            setState(IMediaController.State.INITIALIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            setState(IMediaController.State.ERROR);
         }
     }
 
     @Override
-    public void setDataSource(String path) throws IOException {
-        KLog.d(TAG, "path = " + path);
+    public void setDataSource(String path) {
         final IMediaPlayer player = getMediaPlayer();
-        if (player != null) {
+        try {
             player.reset();
             player.setDisplay(getSurfaceHolder());
             player.setDataSource(path);
+
+            setState(IMediaController.State.INITIALIZED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            setState(IMediaController.State.ERROR);
         }
     }
 
@@ -91,33 +102,58 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
 
     @Override
     public void start() {
-        if (getMediaPlayer() != null) {
-            try {
-                getMediaPlayer().prepareAsync();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            }
+        try {
+            getMediaPlayer().prepareAsync();
+            setState(IMediaController.State.PREPARING);
+        } catch (Exception e) {
+            e.printStackTrace();
+            setState(IMediaController.State.ERROR);
         }
     }
 
     @Override
-    public void resume() {
-        if (getMediaPlayer() != null) {
-            getMediaPlayer().start();
+    public void stop() {
+        try {
+            getMediaPlayer().stop();
+            setState(IMediaController.State.STOPPED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            setState(IMediaController.State.ERROR);
         }
     }
 
     @Override
     public void pause() {
-        if (getMediaPlayer() != null) {
+        try {
             getMediaPlayer().pause();
+            setState(IMediaController.State.PAUSED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            setState(IMediaController.State.ERROR);
+        }
+    }
+
+    @Override
+    public void resume() {
+        try {
+            getMediaPlayer().start();
+            if (getState() == IMediaController.State.PAUSED) {
+                setState(IMediaController.State.STARTED);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            setState(IMediaController.State.ERROR);
         }
     }
 
     @Override
     public void release() {
-        if (getMediaPlayer() != null) {
+        try {
             getMediaPlayer().release();
+            setState(IMediaController.State.END);
+        } catch (Exception e) {
+            e.printStackTrace();
+            setState(IMediaController.State.ERROR);
         }
     }
 
@@ -139,27 +175,57 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
         }
     }
 
-    protected void onListenedBufferingUpdate(IMediaPlayer mp, int percent) {
+    private void bufferingUpdate(IMediaPlayer mp, int percent) {
+        onBufferingUpdate(mp, percent);
     }
 
-    protected void onListenedCompletion(IMediaPlayer mp) {
+    private void completion(IMediaPlayer mp) {
+        setState(IMediaController.State.PLAYBACK_COMPLETED);
+        onCompletion(mp);
     }
 
-    protected boolean onListenedError(IMediaPlayer mp, int what, int extra) {
+    private boolean error(IMediaPlayer mp, int what, int extra) {
+        setState(IMediaController.State.ERROR);
+        return onError(mp);
+    }
+
+    private boolean info(IMediaPlayer mp, int what, int extra) {
+        if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START || what == IMediaPlayer.MEDIA_INFO_VIDEO_SEEK_RENDERING_START) {
+            setState(IMediaController.State.STARTED);
+        }
         return false;
     }
 
-    protected boolean onListenedInfo(IMediaPlayer mp, int what, int extra) {
+    private void prepared(IMediaPlayer mp) {
+        setState(IMediaController.State.PREPARED);
+        onPrepared(mp);
+    }
+
+    private void seekComplete(IMediaPlayer mp) {
+        onSeekComplete(mp);
+    }
+
+    private void videoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
+        onVideoSizeChanged(mp, width, height, sar_num, sar_den);
+    }
+
+    protected void onBufferingUpdate(IMediaPlayer mp, int percent) {
+    }
+
+    protected void onCompletion(IMediaPlayer mp) {
+    }
+
+    protected boolean onError(IMediaPlayer mp) {
         return false;
     }
 
-    protected void onListenedPrepared(IMediaPlayer mp) {
+    protected void onPrepared(IMediaPlayer mp) {
     }
 
-    protected void onListenedSeekComplete(IMediaPlayer mp) {
+    protected void onSeekComplete(IMediaPlayer mp) {
     }
 
-    protected void onListenedVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
+    protected void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
     }
 
     private final SurfaceHolder.Callback2 mSurfaceCallback = new SurfaceHolder.Callback2() {
@@ -178,8 +244,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            KLog.d(TAG, String.format(Locale.US, "holder = %s, format = %s, width = %d, height = %d",
-                    holder, PixelFormatUtil.formatToString(format), width, height));
+            KLog.d(TAG, String.format(Locale.US, "holder = %s, format = %s, width = %d, height = %d", holder, PixelFormatUtil.formatToString(format), width, height));
         }
 
         @Override
@@ -195,39 +260,39 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
 
         @Override
         public void onBufferingUpdate(IMediaPlayer mp, int percent) {
-            KLog.w(TAG, "percent = " + percent);
-            onListenedBufferingUpdate(mp, percent);
+            //KLog.w(TAG, "percent = " + percent);
+            bufferingUpdate(mp, percent);
         }
 
         @Override
         public void onCompletion(IMediaPlayer mp) {
             KLog.w(TAG, "");
-            onListenedCompletion(mp);
+            completion(mp);
         }
 
         @Override
         public boolean onError(IMediaPlayer mp, int what, int extra) {
             KLog.w(TAG, "what = " + IjkMediaPlayerUtil.errorToString(getContext(), what) + ", extra = " + extra);
-            return onListenedError(mp, what, extra);
+            return error(mp, what, extra);
         }
 
         @Override
         public boolean onInfo(IMediaPlayer mp, int what, int extra) {
             KLog.w(TAG, "what = " + IjkMediaPlayerUtil.infoToString(getContext(), what) + ", extra = " + extra);
-            return onListenedInfo(mp, what, extra);
+            return info(mp, what, extra);
         }
 
         @Override
         public void onPrepared(IMediaPlayer mp) {
             KLog.w(TAG, "");
-            onListenedPrepared(mp);
+            prepared(mp);
         }
 
 
         @Override
         public void onSeekComplete(IMediaPlayer mp) {
             KLog.d(TAG, "");
-            onListenedSeekComplete(mp);
+            seekComplete(mp);
         }
 
         @Override
@@ -238,7 +303,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView {
         @Override
         public void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
             KLog.w(TAG, "width = " + width + ", height = " + height + ", sar_num = " + sar_num + ", sar_den = " + sar_den);
-            onListenedVideoSizeChanged(mp, width, height, sar_num, sar_den);
+            videoSizeChanged(mp, width, height, sar_num, sar_den);
         }
     };
 }

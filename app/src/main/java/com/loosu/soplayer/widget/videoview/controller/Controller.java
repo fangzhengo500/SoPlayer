@@ -10,10 +10,14 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.loosu.soplayer.R;
+import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.TimeUtil;
+import com.loosu.soplayer.widget.videoview.interfaces.IController;
+import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 
 
-public class Controller extends FrameLayout {
+public class Controller extends FrameLayout implements IController {
+    private static final String TAG = "AbsSoVideoView";
 
     private IMediaController mPlayer;
 
@@ -34,13 +38,23 @@ public class Controller extends FrameLayout {
 
         mBtnPauseOrResume.setOnClickListener(mClickListener);
         mProgress.setOnSeekBarChangeListener(mSeekListener);
+
+        updateBtnPauseOrResume();
     }
 
     public void setMediaPlayer(IMediaController player) {
         mPlayer = player;
+        updateBtnPauseOrResume();
+    }
 
-        setProgress();
-        mShowProgress.run();
+    @Override
+    public void show() {
+        post(mShowProgress);
+    }
+
+    @Override
+    public void hide() {
+        removeCallbacks(mShowProgress);
     }
 
     private void setProgress() {
@@ -72,10 +86,16 @@ public class Controller extends FrameLayout {
     public void updateBtnPauseOrResume() {
         if (mBtnPauseOrResume == null)
             return;
+        if (mPlayer == null) {
+            KLog.i(TAG, "player = null, 显示 ▲ 样式.");
+            mBtnPauseOrResume.setImageResource(R.drawable.controller_btn_resume_drawable);
 
-        if (mPlayer.isPlaying()) {
+        } else if (mPlayer.getState() == IMediaController.State.STARTED || mPlayer.getState() == IMediaController.State.PREPARING || mPlayer.getState() == IMediaController.State.PREPARED) {
+            KLog.i(TAG, "playing = " + mPlayer.isPlaying() + " state = " + mPlayer.getState() + " 显示 || 样式.");
             mBtnPauseOrResume.setImageResource(R.drawable.controller_btn_pause_drawable);
+
         } else {
+            KLog.i(TAG, "playing = " + mPlayer.isPlaying() + " state = " + mPlayer.getState() + " 显示 ▲ 样式.");
             mBtnPauseOrResume.setImageResource(R.drawable.controller_btn_resume_drawable);
         }
     }
@@ -84,10 +104,17 @@ public class Controller extends FrameLayout {
 
         @Override
         public void onClick(View v) {
-            if (mPlayer.isPlaying()) {
+            if (mPlayer.getState() == IMediaController.State.STARTED) {
+                KLog.d(TAG, "暂停 - pause");
                 mPlayer.pause();
-            } else {
+
+            } else if (mPlayer.getState() == IMediaController.State.PAUSED || mPlayer.getState() == IMediaController.State.PLAYBACK_COMPLETED) {
+                KLog.d(TAG, "恢复 - resume");
                 mPlayer.resume();
+
+            } else {
+                mPlayer.start();
+
             }
             updateBtnPauseOrResume();
         }
@@ -106,6 +133,11 @@ public class Controller extends FrameLayout {
                 return;
             }
 
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
             long duration = mPlayer.getDuration();
             float percent = mProgress.getProgress() * 1f / mProgress.getMax();
             long newPosition = (long) (duration * percent);
@@ -113,10 +145,7 @@ public class Controller extends FrameLayout {
             if (mTvCurrentPosition != null) {
                 mTvCurrentPosition.setText(TimeUtil.formatDuration(newPosition));
             }
-        }
 
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
             setProgress();
             updateBtnPauseOrResume();
             post(mShowProgress);

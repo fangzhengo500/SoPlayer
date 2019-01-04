@@ -10,12 +10,12 @@ import android.view.SurfaceHolder;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.widget.videoview.controller.Controller;
-import com.loosu.soplayer.widget.videoview.controller.IMediaController;
+import com.loosu.soplayer.widget.videoview.interfaces.IController;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class BaseSoVideoView extends AbsSoVideoView implements IMediaController {
+public class SoVideoView extends AbsSoVideoView {
     private static final String TAG = "BaseSoVideoView";
 
     private IMediaPlayer mPlayer = new IjkMediaPlayer();
@@ -24,27 +24,28 @@ public class BaseSoVideoView extends AbsSoVideoView implements IMediaController 
 
     private AutoFixSurfaceView mSurfaceView;
 
-    private Controller mController;
+    private IController mController;
 
-    public BaseSoVideoView(@NonNull Context context) {
+    public SoVideoView(@NonNull Context context) {
         this(context, null);
     }
 
-    public BaseSoVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public SoVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public BaseSoVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public SoVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         KLog.w(TAG, "");
         init(context, attrs, defStyleAttr);
         LayoutInflater.from(context).inflate(getLayoutId(), this, true);
         mSurfaceView = findViewById(R.id.surface_view);
 
-        mController = new Controller(context);
-        mController.setMediaPlayer(this);
+        Controller controller = new Controller(context);
+        controller.setMediaPlayer(this);
+        mController = controller;
 
-        addView(mController);
+        addView(controller);
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -66,18 +67,21 @@ public class BaseSoVideoView extends AbsSoVideoView implements IMediaController 
     }
 
     @Override
-    protected void onListenedVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
+    protected void onPrepared(IMediaPlayer mp) {
+        super.onPrepared(mp);
+        if (mController!=null) {
+            mController.show();
+        }
+    }
+
+    @Override
+    protected void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
         mSurfaceView.setAspectRatio(width, height);
     }
 
     @Override
-    protected void onListenedBufferingUpdate(IMediaPlayer mp, int percent) {
+    protected void onBufferingUpdate(IMediaPlayer mp, int percent) {
         mBufferPercentage = percent;
-    }
-
-    @Override
-    public void start() {
-        super.start();
     }
 
     @Override

@@ -13,12 +13,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.loosu.soplayer.R;
-import com.loosu.soplayer.widget.videoview.PlayerState;
 import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.IjkMediaPlayerUtil;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.PixelFormatUtil;
 import com.loosu.soplayer.widget.videoview.AutoFixSurfaceView;
+import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 
 import java.io.IOException;
 
@@ -39,7 +39,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     private static final String KEY_VIDEO = "VIDEO";
 
     private VideoEntry mVideo;
-    private PlayerState mPlayerState = PlayerState.IDLE;
+    private IMediaController.State mPlayerState = IMediaController.State.IDLE;
 
     private IjkMediaPlayer mMediaPlayer;
 
@@ -171,12 +171,12 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.btn_reset:
                 mMediaPlayer.reset();
-                mPlayerState = PlayerState.IDLE;
+                mPlayerState = IMediaController.State.IDLE;
                 break;
             case R.id.btn_set_data:
                 try {
                     mMediaPlayer.setDataSource(mVideo.getData());
-                    mPlayerState = PlayerState.INITIALIZED;
+                    mPlayerState = IMediaController.State.INITIALIZED;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -184,27 +184,27 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
             case R.id.btn_prepare:
                 mMediaPlayer.setDisplay(mSurfaceView.getHolder());
                 mMediaPlayer.prepareAsync();
-                mPlayerState = PlayerState.PREPARING;
+                mPlayerState = IMediaController.State.PREPARING;
                 break;
             case R.id.btn_start:
                 mMediaPlayer.start();
                 boolean playing = mMediaPlayer.isPlaying();
                 KLog.d(TAG, "playing = " + playing);
-                if (mPlayerState == PlayerState.PAUSED) {
-                    mPlayerState = PlayerState.STARTED;
+                if (mPlayerState == IMediaController.State.PAUSED) {
+                    mPlayerState = IMediaController.State.STARTED;
                 }
                 break;
             case R.id.btn_stop:
                 mMediaPlayer.stop();
-                mPlayerState = PlayerState.STOPPED;
+                mPlayerState = IMediaController.State.STOPPED;
                 break;
             case R.id.btn_pause:
                 mMediaPlayer.pause();
-                mPlayerState = PlayerState.PAUSED;
+                mPlayerState = IMediaController.State.PAUSED;
                 break;
             case R.id.btn_release:
                 mMediaPlayer.release();
-                mPlayerState = PlayerState.END;
+                mPlayerState = IMediaController.State.END;
                 break;
         }
         updateInfo(mMediaPlayer);
@@ -263,14 +263,14 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     @Override
     public void onCompletion(IMediaPlayer mp) {
         KLog.w(TAG, "");
-        mPlayerState = PlayerState.PLAYBACK_COMPLETED;
+        mPlayerState = IMediaController.State.PLAYBACK_COMPLETED;
         updateInfo(mMediaPlayer);
     }
 
     @Override
     public boolean onError(IMediaPlayer mp, int what, int extra) {
         KLog.w(TAG, "what = " + IjkMediaPlayerUtil.errorToString(getApplicationContext(), what) + ", extra = " + extra);
-        mPlayerState = PlayerState.ERROR;
+        mPlayerState = IMediaController.State.ERROR;
         updateInfo(mMediaPlayer);
         return false;
     }
@@ -279,7 +279,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     public boolean onInfo(IMediaPlayer mp, int what, int extra) {
         KLog.w(TAG, "what = " + IjkMediaPlayerUtil.infoToString(getApplicationContext(), what) + ", extra = " + extra);
         if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START || what == IMediaPlayer.MEDIA_INFO_VIDEO_SEEK_RENDERING_START) {
-            mPlayerState = PlayerState.STARTED;
+            mPlayerState = IMediaController.State.STARTED;
         }
         updateInfo(mMediaPlayer);
         return false;
@@ -288,7 +288,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     @Override
     public void onPrepared(IMediaPlayer mp) {
         KLog.w(TAG, "");
-        mPlayerState = PlayerState.PREPARED;
+        mPlayerState = IMediaController.State.PREPARED;
         long currentPosition = mp.getCurrentPosition();
         long duration = mp.getDuration();
         mTvSeekValue.setText(String.valueOf(currentPosition + "/" + duration));

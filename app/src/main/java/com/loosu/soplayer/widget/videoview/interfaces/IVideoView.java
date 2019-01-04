@@ -1,4 +1,4 @@
-package com.loosu.soplayer.widget.videoview;
+package com.loosu.soplayer.widget.videoview.interfaces;
 
 import android.content.Context;
 import android.net.Uri;

@@ -2,8 +2,6 @@ package com.loosu.test.videoview;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,9 +12,7 @@ import android.view.ViewGroup;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.KLog;
-import com.loosu.soplayer.widget.videoview.BaseSoVideoView;
-
-import java.io.IOException;
+import com.loosu.soplayer.widget.videoview.SoVideoView;
 
 public class VideoViewTestFragment extends Fragment {
     private static final String TAG = "VideoViewTestFragment";
@@ -25,7 +21,7 @@ public class VideoViewTestFragment extends Fragment {
 
     private VideoEntry mVideo;
 
-    private BaseSoVideoView mVideoView;
+    private SoVideoView mVideoView;
 
     @Override
     public void onAttach(Context context) {
@@ -50,19 +46,13 @@ public class VideoViewTestFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         KLog.d(TAG, "view = " + view + ", savedInstanceState = " + savedInstanceState);
         mVideoView = view.findViewById(R.id.video_view);
-        // mVideoView.setOnClickListener(mClickListener);
         mVideoView.post(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (getArguments() != null) {
-                        Bundle bundle = getArguments();
-                        mVideo = bundle.getParcelable(KEY_VIDEO);
-                        mVideoView.setDataSource(mVideo.getData());
-                    }
-                    mVideoView.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (getArguments() != null) {
+                    Bundle bundle = getArguments();
+                    mVideo = bundle.getParcelable(KEY_VIDEO);
+                    mVideoView.setDataSource(mVideo.getData());
                 }
             }
         });
@@ -115,22 +105,4 @@ public class VideoViewTestFragment extends Fragment {
         KLog.d(TAG, "");
         super.onDetach();
     }
-
-    private final View.OnClickListener mClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            try {
-                mVideoView.setDataSource("http://ivytest.i-weiying.com/74ba/video/20181222/20181222cceea418d72ed7ba9af883349500cba91545449583751.mp4?auth_key=1546421228-0-0-9b8044233c8ef44e0b875a87366166bb");
-                if (getArguments() != null) {
-                    Bundle bundle = getArguments();
-                    mVideo = bundle.getParcelable(KEY_VIDEO);
-                    mVideoView.setDataSource(mVideo.getData());
-                }
-                mVideoView.start();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    };
 }
