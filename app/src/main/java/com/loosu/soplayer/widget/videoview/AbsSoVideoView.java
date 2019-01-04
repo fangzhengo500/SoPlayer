@@ -190,7 +190,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
     }
 
     private boolean info(IMediaPlayer mp, int what, int extra) {
-        if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START || what == IMediaPlayer.MEDIA_INFO_VIDEO_SEEK_RENDERING_START) {
+        if (mp.isPlaying() && (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START || what == IMediaPlayer.MEDIA_INFO_VIDEO_SEEK_RENDERING_START)) {
             setState(IMediaController.State.STARTED);
         }
         return false;
@@ -260,7 +260,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
 
         @Override
         public void onBufferingUpdate(IMediaPlayer mp, int percent) {
-            //KLog.w(TAG, "percent = " + percent);
+            KLog.d(TAG, "percent = " + percent);
             bufferingUpdate(mp, percent);
         }
 
@@ -291,7 +291,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
 
         @Override
         public void onSeekComplete(IMediaPlayer mp) {
-            KLog.d(TAG, "");
+            KLog.w(TAG, "");
             seekComplete(mp);
         }
 

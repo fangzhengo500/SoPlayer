@@ -52,7 +52,8 @@ public class VideoViewTestFragment extends Fragment {
                 if (getArguments() != null) {
                     Bundle bundle = getArguments();
                     mVideo = bundle.getParcelable(KEY_VIDEO);
-                    mVideoView.setDataSource(mVideo.getData());
+                    //mVideoView.setDataSource(mVideo.getData());
+                    mVideoView.setDataSource("http://ivytest.i-weiying.com/727b/video/20190104/20190104a78d368982e797041b814cbce7112898154658740138.mov?auth_key=1546595144-0-0-d1c3a0ab0300f6a3af7a62f1871a2245");
                 }
             }
         });

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
+import android.view.View;
 
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
@@ -15,7 +16,7 @@ import com.loosu.soplayer.widget.videoview.interfaces.IController;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
-public class SoVideoView extends AbsSoVideoView {
+public class SoVideoView extends AbsSoVideoView implements View.OnClickListener {
     private static final String TAG = "BaseSoVideoView";
 
     private IMediaPlayer mPlayer = new IjkMediaPlayer();
@@ -46,6 +47,7 @@ public class SoVideoView extends AbsSoVideoView {
         mController = controller;
 
         addView(controller);
+        setOnClickListener(this);
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -69,7 +71,7 @@ public class SoVideoView extends AbsSoVideoView {
     @Override
     protected void onPrepared(IMediaPlayer mp) {
         super.onPrepared(mp);
-        if (mController!=null) {
+        if (mController != null) {
             mController.show();
         }
     }
@@ -107,5 +109,14 @@ public class SoVideoView extends AbsSoVideoView {
     @Override
     public boolean isPlaying() {
         return mPlayer.isPlaying();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (mController.isShowing()) {
+            mController.hide();
+        } else {
+            mController.show();
+        }
     }
 }

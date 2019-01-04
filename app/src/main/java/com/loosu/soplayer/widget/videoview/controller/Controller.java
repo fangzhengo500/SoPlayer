@@ -20,6 +20,8 @@ public class Controller extends FrameLayout implements IController {
     private static final String TAG = "AbsSoVideoView";
 
     private IMediaController mPlayer;
+    private boolean mShowing = true;
+
 
     private final ImageView mBtnPauseOrResume;
 
@@ -39,22 +41,37 @@ public class Controller extends FrameLayout implements IController {
         mBtnPauseOrResume.setOnClickListener(mClickListener);
         mProgress.setOnSeekBarChangeListener(mSeekListener);
 
-        updateBtnPauseOrResume();
+        updateBtnPlay();
     }
 
     public void setMediaPlayer(IMediaController player) {
         mPlayer = player;
-        updateBtnPauseOrResume();
+        updateBtnPlay();
+    }
+
+    @Override
+    public boolean isShowing() {
+        return mShowing;
     }
 
     @Override
     public void show() {
+        if (mShowing) {
+            return;
+        }
+        mShowing = true;
         post(mShowProgress);
+        setVisibility(VISIBLE);
     }
 
     @Override
     public void hide() {
+        if (!mShowing) {
+            return;
+        }
+        mShowing = false;
         removeCallbacks(mShowProgress);
+        setVisibility(GONE);
     }
 
     private void setProgress() {
@@ -66,6 +83,12 @@ public class Controller extends FrameLayout implements IController {
         long currentPosition = player.getCurrentPosition();
         long duration = player.getDuration();
 
+        if (player.getState() == IMediaController.State.PLAYBACK_COMPLETED) {
+            mProgress.setProgress(mProgress.getMax());
+            mTvCurrentPosition.setText(TimeUtil.formatDuration(duration));
+            return;
+        }
+
         if (mProgress != null) {
             if (duration > 0) {
                 float percent = currentPosition * 1f / duration;
@@ -73,6 +96,7 @@ public class Controller extends FrameLayout implements IController {
             }
             mProgress.setSecondaryProgress((int) (mProgress.getMax() * mPlayer.getBufferPercentage()));
         }
+
         if (mTvCurrentPosition != null) {
             mTvCurrentPosition.setText(TimeUtil.formatDuration(currentPosition));
         }
@@ -83,7 +107,7 @@ public class Controller extends FrameLayout implements IController {
         }
     }
 
-    public void updateBtnPauseOrResume() {
+    public void updateBtnPlay() {
         if (mBtnPauseOrResume == null)
             return;
         if (mPlayer == null) {
@@ -100,23 +124,27 @@ public class Controller extends FrameLayout implements IController {
         }
     }
 
+    private void onClickBtnPlay() {
+        if (mPlayer.getState() == IMediaController.State.STARTED) {
+            KLog.d(TAG, "暂停 - pause");
+            mPlayer.pause();
+
+        } else if (mPlayer.getState() == IMediaController.State.PAUSED || mPlayer.getState() == IMediaController.State.PLAYBACK_COMPLETED) {
+            KLog.d(TAG, "恢复 - resume");
+            mPlayer.resume();
+
+        } else {
+            mPlayer.start();
+
+        }
+        updateBtnPlay();
+    }
+
     private final View.OnClickListener mClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            if (mPlayer.getState() == IMediaController.State.STARTED) {
-                KLog.d(TAG, "暂停 - pause");
-                mPlayer.pause();
-
-            } else if (mPlayer.getState() == IMediaController.State.PAUSED || mPlayer.getState() == IMediaController.State.PLAYBACK_COMPLETED) {
-                KLog.d(TAG, "恢复 - resume");
-                mPlayer.resume();
-
-            } else {
-                mPlayer.start();
-
-            }
-            updateBtnPauseOrResume();
+            onClickBtnPlay();
         }
     };
 
@@ -147,7 +175,7 @@ public class Controller extends FrameLayout implements IController {
             }
 
             setProgress();
-            updateBtnPauseOrResume();
+            updateBtnPlay();
             post(mShowProgress);
         }
     };

@@ -278,7 +278,8 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     @Override
     public boolean onInfo(IMediaPlayer mp, int what, int extra) {
         KLog.w(TAG, "what = " + IjkMediaPlayerUtil.infoToString(getApplicationContext(), what) + ", extra = " + extra);
-        if (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START || what == IMediaPlayer.MEDIA_INFO_VIDEO_SEEK_RENDERING_START) {
+
+        if (mp.isPlaying() && (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START || what == IMediaPlayer.MEDIA_INFO_VIDEO_SEEK_RENDERING_START)) {
             mPlayerState = IMediaController.State.STARTED;
         }
         updateInfo(mMediaPlayer);
