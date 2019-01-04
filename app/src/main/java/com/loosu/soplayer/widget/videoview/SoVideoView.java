@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
-import com.loosu.soplayer.widget.videoview.controller.Controller;
+import com.loosu.soplayer.widget.videoview.controller.GestureController;
 import com.loosu.soplayer.widget.videoview.interfaces.IController;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -42,7 +42,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         LayoutInflater.from(context).inflate(getLayoutId(), this, true);
         mSurfaceView = findViewById(R.id.surface_view);
 
-        Controller controller = new Controller(context);
+        GestureController controller = new GestureController(context);
         controller.setMediaPlayer(this);
         mController = controller;
 
