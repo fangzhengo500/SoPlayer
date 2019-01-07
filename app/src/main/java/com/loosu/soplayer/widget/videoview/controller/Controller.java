@@ -22,16 +22,23 @@ public class Controller extends FrameLayout implements IController {
     private IMediaController mPlayer;
     private boolean mShowing = true;
 
+    private ImageView mBtnPauseOrResume;
 
-    private final ImageView mBtnPauseOrResume;
-
-    private final TextView mTvCurrentPosition;
-    private final TextView mTvDuration;
-    private final SeekBar mProgress;
+    private TextView mTvCurrentPosition;
+    private TextView mTvDuration;
+    private SeekBar mProgress;
 
     public Controller(@NonNull Context context) {
         super(context);
-        LayoutInflater.from(context).inflate(R.layout.widget_controller, this, true);
+        LayoutInflater.from(context).inflate(getLayoutId(), this, true);
+        initController(context);
+    }
+
+    protected int getLayoutId() {
+        return R.layout.widget_controller;
+    }
+
+    protected void initController(@NonNull Context context) {
         mBtnPauseOrResume = findViewById(R.id.btn_pause_or_resume);
 
         mTvCurrentPosition = findViewById(R.id.tv_current_position);

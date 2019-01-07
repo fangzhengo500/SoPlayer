@@ -61,6 +61,8 @@ public class VideoViewTestFragment extends Fragment {
         mVideoView = view.findViewById(R.id.video_view);
         mViewList = view.findViewById(R.id.view_list);
 
+        mVideoView.setDataSource(mVideos.get(mPosition).getData());
+
         mViewList.setLayoutManager(new LinearLayoutManager(getContext()));
         mViewList.setAdapter(new VideoViewAdapter(mVideos));
     }

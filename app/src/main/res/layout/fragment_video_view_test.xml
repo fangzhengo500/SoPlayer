@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<com.loosu.soplayer.widget.videoview.SoVideoView-->
-        <!--android:id="@+id/video_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1" />-->
+    <com.loosu.soplayer.widget.videoview.SoVideoView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/view_list"
