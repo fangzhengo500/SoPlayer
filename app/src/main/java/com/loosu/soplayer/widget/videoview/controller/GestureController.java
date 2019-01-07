@@ -20,6 +20,7 @@ public class GestureController extends Controller {
         final int action = event.getAction();
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;

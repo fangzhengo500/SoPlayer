@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +16,19 @@ import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.widget.videoview.SoVideoView;
 
+import java.util.ArrayList;
+
 public class VideoViewTestFragment extends Fragment {
     private static final String TAG = "VideoViewTestFragment";
 
-    private static final String KEY_VIDEO = "VIDEO";
+    private static final String KEY_VIDEOS = "key_videos";
+    private static final String KEY_POSITION = "key_position";
 
-    private VideoEntry mVideo;
+    private ArrayList<VideoEntry> mVideos;
+    private int mPosition;
 
     private SoVideoView mVideoView;
+    private RecyclerView mViewList;
 
     @Override
     public void onAttach(Context context) {
@@ -33,6 +40,12 @@ public class VideoViewTestFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         KLog.d(TAG, "savedInstanceState = " + savedInstanceState);
         super.onCreate(savedInstanceState);
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mVideos = (ArrayList<VideoEntry>) arguments.getSerializable(KEY_VIDEOS);
+            mPosition = arguments.getInt(KEY_POSITION);
+        }
     }
 
     @Nullable
@@ -46,17 +59,10 @@ public class VideoViewTestFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         KLog.d(TAG, "view = " + view + ", savedInstanceState = " + savedInstanceState);
         mVideoView = view.findViewById(R.id.video_view);
-        mVideoView.post(new Runnable() {
-            @Override
-            public void run() {
-                if (getArguments() != null) {
-                    Bundle bundle = getArguments();
-                    mVideo = bundle.getParcelable(KEY_VIDEO);
-                    //mVideoView.setDataSource(mVideo.getData());
-                    mVideoView.setDataSource("http://ivytest.i-weiying.com/727b/video/20190104/20190104a78d368982e797041b814cbce7112898154658740138.mov?auth_key=1546595144-0-0-d1c3a0ab0300f6a3af7a62f1871a2245");
-                }
-            }
-        });
+        mViewList = view.findViewById(R.id.view_list);
+
+        mViewList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mViewList.setAdapter(new VideoViewAdapter(mVideos));
     }
 
     @Override

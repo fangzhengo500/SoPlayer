@@ -238,10 +238,11 @@ public class DocumentsFragment extends Fragment {
         @Override
         public void onItemClick(RecyclerView parent, int position, RecyclerView.ViewHolder holder, View view) {
             DocumentVideoAdapter adapter = (DocumentVideoAdapter) parent.getAdapter();
-            VideoEntry videoEntry = adapter.getItem(position);
 
-            Intent intent = VideoViewTestActivity.getStartIntent(getContext(), videoEntry);
-            //Intent intent = IjkMediaPlayerTestActivity.getStartIntent(getContext(), videoEntry);
+            Intent intent = VideoViewTestActivity.getStartIntent(getContext(), adapter.getDatas(), position);
+
+            // VideoEntry videoEntry = adapter.getItem(position);
+            // Intent intent = IjkMediaPlayerTestActivity.getStartIntent(getContext(), videoEntry);
             startActivity(intent);
         }
     };

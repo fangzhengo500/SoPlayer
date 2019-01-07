@@ -5,9 +5,15 @@
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
-    <fragment
-        android:id="@+id/fragment_video_view_test"
-        class="com.loosu.test.videoview.VideoViewTestFragment"
+    <!--<fragment-->
+    <!--android:id="@+id/fragment_video_view_test"-->
+    <!--class="com.loosu.test.videoview.VideoViewTestFragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_weight="1" />-->
+
+    <FrameLayout
+        android:id="@+id/layout_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />

@@ -82,6 +82,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
 
     @Override
     public void setDataSource(String path) {
+        KLog.d(TAG, "path = " + path);
         final IMediaPlayer player = getMediaPlayer();
         try {
             player.reset();
@@ -251,7 +252,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
         public void surfaceDestroyed(SurfaceHolder holder) {
             KLog.d(TAG, String.format(Locale.US, "holder = %s", holder));
             if (getMediaPlayer() != null) {
-                getMediaPlayer().release();
+                getMediaPlayer().stop();
             }
         }
     };
