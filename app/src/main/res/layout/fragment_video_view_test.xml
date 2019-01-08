@@ -8,7 +8,8 @@
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:background="#555" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/view_list"

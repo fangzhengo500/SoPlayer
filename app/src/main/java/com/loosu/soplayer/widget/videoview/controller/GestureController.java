@@ -6,11 +6,15 @@ import android.media.AudioManager;
 import android.support.annotation.NonNull;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
+import com.loosu.soplayer.utils.TimeUtil;
 import com.loosu.soplayer.widget.SoProgressBar;
 
 public class GestureController extends Controller {
@@ -18,14 +22,22 @@ public class GestureController extends Controller {
 
     private boolean mVolChanging = false;
     private boolean mScreenBrightChanging = false;
+    private boolean mSeek = false;
 
     private int mVolume;
     private float mScreenBrightness;
+    private long mCurrentPosition;
 
     private SoProgressBar mProgressVolume;
     private SoProgressBar mProgressScreenBright;
 
+    private View mLayoutSeek;
+    private TextView mTvSeekPosition;
+    private TextView mTvSeekDuration;
+    private ProgressBar mProgressBarSeek;
+
     private final GestureDetector mGestureDetector;
+    private int mSeekTo = -1;
 
     public GestureController(@NonNull Context context) {
         super(context);
@@ -43,6 +55,11 @@ public class GestureController extends Controller {
         super.initController(context);
         mProgressVolume = findViewById(R.id.progress_volume);
         mProgressScreenBright = findViewById(R.id.progress_screen_brightness);
+
+        mLayoutSeek = findViewById(R.id.layout_seek);
+        mTvSeekPosition = findViewById(R.id.tv_seek_position);
+        mTvSeekDuration = findViewById(R.id.tv_seek_duration);
+        mProgressBarSeek = findViewById(R.id.progress_bar_seek);
     }
 
     @Override
@@ -58,13 +75,18 @@ public class GestureController extends Controller {
             case MotionEvent.ACTION_UP:
                 mVolChanging = false;
                 mScreenBrightChanging = false;
+                mSeek = false;
                 mProgressVolume.setVisibility(GONE);
                 mProgressScreenBright.setVisibility(GONE);
+                mLayoutSeek.setVisibility(GONE);
+                if (mSeekTo != -1) {
+                    mPlayer.seeKTo(mSeekTo);
+                    mSeekTo = -1;
+                }
                 break;
         }
         return mGestureDetector.onTouchEvent(event);
     }
-
 
     private GestureDetector.OnGestureListener mGestureListener = new GestureDetector.OnGestureListener() {
         @Override
@@ -94,7 +116,7 @@ public class GestureController extends Controller {
             float xDiff = Math.abs(moveX);
             float yDiff = Math.abs(moveY);
 
-            if (!mVolChanging && !mScreenBrightChanging) {
+            if (!mVolChanging && !mScreenBrightChanging && !mSeek) {
                 if (yDiff > xDiff) {
                     if (downX > getWidth() / 2) {
                         mVolChanging = true;
@@ -109,6 +131,10 @@ public class GestureController extends Controller {
                             mScreenBrightness = windowParams.screenBrightness;
                         }
                     }
+                } else {
+                    mSeek = true;
+                    mCurrentPosition = mPlayer.getCurrentPosition();
+                    mLayoutSeek.setVisibility(VISIBLE);
                 }
             } else if (mVolChanging) {
                 int dVol = (int) (-moveY * 0.02);
@@ -138,8 +164,20 @@ public class GestureController extends Controller {
                     }
                     window.setAttributes(params);
 
-                    mProgressScreenBright.setText(String.format("%.1f",params.screenBrightness));
+                    mProgressScreenBright.setProgress((int) (params.screenBrightness * mProgressScreenBright.getMax()));
+                    mProgressScreenBright.setText(String.format("%.1f", params.screenBrightness));
                 }
+            } else if (mSeek) {
+                mSeekTo = (int) (mCurrentPosition + moveX * 5);
+                long duration = mPlayer.getDuration();
+                float present = 0;
+                if (duration != 0) {
+                    present = mSeekTo * 1f / duration;
+                }
+
+                mTvSeekPosition.setText(TimeUtil.formatDuration(mSeekTo));
+                mTvSeekDuration.setText(TimeUtil.formatDuration(duration));
+                mProgressBarSeek.setProgress((int) (present * mProgressBarSeek.getMax()));
             }
 
             return false;

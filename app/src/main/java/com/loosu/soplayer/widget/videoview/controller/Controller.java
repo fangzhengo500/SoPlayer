@@ -19,7 +19,7 @@ import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 public class Controller extends FrameLayout implements IController {
     private static final String TAG = "AbsSoVideoView";
 
-    private IMediaController mPlayer;
+    protected IMediaController mPlayer;
     private boolean mShowing = true;
 
     private ImageView mBtnPauseOrResume;
@@ -81,7 +81,7 @@ public class Controller extends FrameLayout implements IController {
         setVisibility(GONE);
     }
 
-    private void setProgress() {
+    protected void setProgress() {
         IMediaController player = mPlayer;
         if (player == null) {
             return;
@@ -167,8 +167,6 @@ public class Controller extends FrameLayout implements IController {
             if (!fromUser) {
                 return;
             }
-
-
         }
 
         @Override
