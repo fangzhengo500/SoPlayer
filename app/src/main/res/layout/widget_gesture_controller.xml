@@ -49,7 +49,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
         android:visibility="gone"
-        app:so_progress_bar_icon="@drawable/ic_action_volume_up"
+        app:so_progress_bar_icon="@drawable/ic_action_srceen_brightness"
         tools:visibility="visible" />
 
     <com.loosu.soplayer.widget.SoProgressBar
