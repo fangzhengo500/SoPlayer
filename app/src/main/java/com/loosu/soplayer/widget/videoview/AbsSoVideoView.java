@@ -193,6 +193,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
     private boolean info(IMediaPlayer mp, int what, int extra) {
         if (mp.isPlaying() && (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START || what == IMediaPlayer.MEDIA_INFO_VIDEO_SEEK_RENDERING_START)) {
             setState(IMediaController.State.STARTED);
+            onStarted(mp);
         }
         return false;
     }
@@ -223,10 +224,14 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
     protected void onPrepared(IMediaPlayer mp) {
     }
 
+    protected void onStarted(IMediaPlayer mp) {
+    }
+
     protected void onSeekComplete(IMediaPlayer mp) {
     }
 
     protected void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
+
     }
 
     private final SurfaceHolder.Callback2 mSurfaceCallback = new SurfaceHolder.Callback2() {

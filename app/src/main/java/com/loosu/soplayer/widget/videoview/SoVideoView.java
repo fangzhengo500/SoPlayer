@@ -1,6 +1,7 @@
 package com.loosu.soplayer.widget.videoview;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -8,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.widget.videoview.controller.GestureController;
@@ -25,6 +28,10 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     private float mBufferPercentage;
 
     private AutoFixSurfaceView mSurfaceView;
+    private ImageView mIvCover;
+
+    private int mVideoWidth = Integer.MIN_VALUE;
+    private int mVideoHeight = Integer.MIN_VALUE;
 
     private IController mController;
 
@@ -45,6 +52,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         init(context, attrs, defStyleAttr);
         LayoutInflater.from(context).inflate(getLayoutId(), this, true);
         mSurfaceView = findViewById(R.id.surface_view);
+        mIvCover = findViewById(R.id.iv_cover);
 
         GestureController controller = new GestureController(context);
         controller.setMediaPlayer(this);
@@ -59,6 +67,26 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
 
     protected int getLayoutId() {
         return R.layout.widget_base_so_player;
+    }
+
+    @Override
+    public void setDataSource(Context context, Uri uri) {
+        super.setDataSource(context, uri);
+
+        mIvCover.setVisibility(VISIBLE);
+        Glide.with(this)
+                .load(uri)
+                .into(mIvCover);
+    }
+
+    @Override
+    public void setDataSource(String path) {
+        super.setDataSource(path);
+
+        mIvCover.setVisibility(VISIBLE);
+        Glide.with(this)
+                .load(path)
+                .into(mIvCover);
     }
 
     @Override
@@ -81,8 +109,19 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     }
 
     @Override
+    protected void onStarted(IMediaPlayer mp) {
+        super.onStarted(mp);
+        mIvCover.setVisibility(GONE);
+    }
+
+    @Override
     protected void onVideoSizeChanged(IMediaPlayer mp, int width, int height, int sar_num, int sar_den) {
-        mSurfaceView.setAspectRatio(width, height);
+        if (mVideoWidth != width || mVideoHeight != height) {
+            mVideoWidth = width;
+            mVideoHeight = height;
+            mSurfaceView.setVisibility(VISIBLE);
+            mSurfaceView.setAspectRatio(width, height);
+        }
     }
 
     @Override
