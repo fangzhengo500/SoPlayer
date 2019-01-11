@@ -1,22 +1,20 @@
 package com.loosu.soplayer.widget.videoview.controller;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.RectF;
-import android.media.AudioManager;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.TimeUtil;
 import com.loosu.soplayer.widget.SoProgressBar;
+import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,51 +22,82 @@ import java.util.List;
 public class GestureController extends Controller {
     private static final String TAG = "GestureController";
 
-    private boolean mVolChanging = false;
-    private boolean mScreenBrightChanging = false;
-    private boolean mSeek = false;
+    private boolean mShowing = true;
 
-    private int mVolume;
-    private float mScreenBrightness;
-    private long mCurrentPosition;
-
-    private SoProgressBar mProgressVolume;
-    private SoProgressBar mProgressScreenBright;
-
-    private View mLayoutSeek;
+    private SoProgressBar mProgressVolume;          // 手势 - 声量
+    private SoProgressBar mProgressScreenBright;    // 手势 - 亮度
+    private View mLayoutSeek;                       // 手势 - 进度
     private TextView mTvSeekPosition;
     private TextView mTvSeekDuration;
     private ProgressBar mProgressBarSeek;
 
-    private final android.view.GestureDetector mGestureDetector;
+    private ImageView mBtnPauseOrResume;
 
+    private TextView mTvCurrentPosition;
+    private TextView mTvDuration;
+    private SeekBar mProgress;
+
+    private Detector mHandingDetector = null;
     private final List<Detector> mDetectors = new ArrayList<>();
-
-    private int mSeekTo = -1;
 
     public GestureController(@NonNull Context context) {
         super(context);
-        mGestureDetector = new android.view.GestureDetector(context, mGestureListener);
-        mGestureDetector.setOnDoubleTapListener(mOnDoubleTapListener);
-        mDetectors.add(new VolumeGestureDetector(getContext(), this));
-        mDetectors.add(new BrightnessGestureDetector(getContext(), this));
-    }
-
-    @Override
-    protected int getLayoutId() {
-        return R.layout.widget_gesture_controller;
-    }
-
-    @Override
-    protected void initController(@NonNull Context context) {
-        super.initController(context);
+        LayoutInflater.from(context).inflate(R.layout.widget_gesture_controller, this, true);
+        // 手势 - 声量
         mProgressVolume = findViewById(R.id.progress_volume);
+        // 手势 - 亮度
         mProgressScreenBright = findViewById(R.id.progress_screen_brightness);
-
+        // 手势 - 进度
         mLayoutSeek = findViewById(R.id.layout_seek);
         mTvSeekPosition = findViewById(R.id.tv_seek_position);
         mTvSeekDuration = findViewById(R.id.tv_seek_duration);
         mProgressBarSeek = findViewById(R.id.progress_bar_seek);
+
+        // 开始 or 暂停
+        mBtnPauseOrResume = findViewById(R.id.btn_pause_or_resume);
+
+        // 底部进度栏
+        mTvCurrentPosition = findViewById(R.id.tv_current_position);
+        mTvDuration = findViewById(R.id.tv_duration);
+        mProgress = findViewById(R.id.progress);
+
+
+        mBtnPauseOrResume.setOnClickListener(mClickListener);
+        mProgress.setOnSeekBarChangeListener(mSeekListener);
+
+        mDetectors.add(new VolumeGestureDetector(getContext(), this));
+        mDetectors.add(new BrightnessGestureDetector(getContext(), this));
+        mDetectors.add(new SeekGestureDetector(getContext(), this));
+        mDetectors.add(new ClickDetector(getContext(), this));
+    }
+
+    @Override
+    public void show() {
+        if (mShowing) {
+            return;
+        }
+        mShowing = true;
+        mBtnPauseOrResume.setVisibility(VISIBLE);
+        mLayoutSeek.setVisibility(VISIBLE);
+    }
+
+    @Override
+    public void hide() {
+        if (!mShowing) {
+            return;
+        }
+        mShowing = false;
+
+        mBtnPauseOrResume.setVisibility(GONE);
+        mLayoutSeek.setVisibility(GONE);
+        hideBrightChange();
+        hideVolumeChange();
+        hideSeekChange();
+    }
+
+    @Override
+    public boolean isShowing() {
+        return mShowing;
     }
 
     @Override
@@ -81,32 +110,44 @@ public class GestureController extends Controller {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //List<Detector> handlingDetectors = findHandlingDetectors();
-        for (int i = 0; i < mDetectors.size(); i++) {
-            mDetectors.get(i).onTouchEvent(event);
+        boolean result = false;
+        final Detector handlingDetector = findHandlingDetector();
+
+        if (handlingDetector != null) {
+            result = handlingDetector.onTouchEvent(event);
+        } else {
+            for (Detector detector : mDetectors) {
+                if (detector.onTouchEvent(event)) {
+                    result = true;
+                }
+            }
         }
-        return true;
-//        if (mPlayer != null && mPlayer.isPlaying()) {
-//            final int action = event.getAction();
-//            switch (action) {
-//                case MotionEvent.ACTION_CANCEL:
-//                case MotionEvent.ACTION_UP:
-//                    mVolChanging = false;
-//                    mScreenBrightChanging = false;
-//                    mSeek = false;
-//                    mProgressVolume.setVisibility(GONE);
-//                    mProgressScreenBright.setVisibility(GONE);
-//                    mLayoutSeek.setVisibility(GONE);
-//                    if (mSeekTo != -1) {
-//                        mPlayer.seeKTo(mSeekTo);
-//                        mSeekTo = -1;
-//                    }
-//                    break;
-//            }
-//            return mGestureDetector.onTouchEvent(event);
-//        } else {
-//            return super.onTouchEvent(event);
-//        }
+
+        int action = event.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mHandingDetector = null;
+                break;
+        }
+
+        if (!result) {
+            super.onTouchEvent(event);
+        }
+        return result;
+    }
+
+    private Detector findHandlingDetector() {
+        if (mHandingDetector != null) {
+            return mHandingDetector;
+        }
+
+        for (Detector detector : mDetectors) {
+            if (detector.isHandling()) {
+                mHandingDetector = detector;
+            }
+        }
+        return mHandingDetector;
     }
 
     public void showBrightChange(float present) {
@@ -129,164 +170,129 @@ public class GestureController extends Controller {
         mProgressVolume.setVisibility(GONE);
     }
 
-    /**
-     * @param defaultBrightness
-     * @return [0 ~ 1]
-     */
-    private float getSysScreenBrightnessInFloat(float defaultBrightness) {
-        float result = defaultBrightness;
-        try {
-            int sysBrightness = Settings.System.getInt(getContext().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
-            result = sysBrightness * 1f / 255;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+    public void showSeekChange(long position, long duration) {
+        float present = position * 1f / duration;
+        mTvSeekPosition.setText(TimeUtil.formatDuration(position));
+        mTvSeekDuration.setText(TimeUtil.formatDuration(duration));
+        mProgressBarSeek.setProgress((int) (present * mProgressBarSeek.getMax()));
+        mLayoutSeek.setVisibility(VISIBLE);
     }
 
-    private android.view.GestureDetector.OnGestureListener mGestureListener = new android.view.GestureDetector.OnGestureListener() {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
+    public void hideSeekChange() {
+        mLayoutSeek.setVisibility(GONE);
+    }
+
+    public long getDuration() {
+        return mPlayer == null ? 0 : mPlayer.getDuration();
+    }
+
+    public long getCurrentPosition() {
+        return mPlayer == null ? 0 : mPlayer.getCurrentPosition();
+    }
+
+    public void updateBtnPlay() {
+        if (mBtnPauseOrResume == null)
+            return;
+        if (mPlayer == null) {
+            KLog.i(TAG, "player = null, 显示 ▲ 样式.");
+            mBtnPauseOrResume.setImageResource(R.drawable.controller_btn_resume_drawable);
+
+        } else if (mPlayer.getState() == IMediaController.State.STARTED || mPlayer.getState() == IMediaController.State.PREPARING || mPlayer.getState() == IMediaController.State.PREPARED) {
+            KLog.i(TAG, "playing = " + mPlayer.isPlaying() + " state = " + mPlayer.getState() + " 显示 || 样式.");
+            mBtnPauseOrResume.setImageResource(R.drawable.controller_btn_pause_drawable);
+
+        } else {
+            KLog.i(TAG, "playing = " + mPlayer.isPlaying() + " state = " + mPlayer.getState() + " 显示 ▲ 样式.");
+            mBtnPauseOrResume.setImageResource(R.drawable.controller_btn_resume_drawable);
         }
+    }
 
-        @Override
-        public void onShowPress(MotionEvent e) {
-            KLog.d(TAG, "e = " + e);
+    private void onClickBtnPlay() {
+        if (mPlayer.getState() == IMediaController.State.STARTED) {
+            KLog.d(TAG, "暂停 - pause");
+            mPlayer.pause();
+
+        } else if (mPlayer.getState() == IMediaController.State.PAUSED || mPlayer.getState() == IMediaController.State.PLAYBACK_COMPLETED) {
+            KLog.d(TAG, "恢复 - resume");
+            mPlayer.resume();
+
+        } else {
+            mPlayer.start();
+
         }
+        updateBtnPlay();
+    }
+
+    private final OnClickListener mClickListener = new OnClickListener() {
 
         @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            KLog.d(TAG, "e = " + e);
-            return true;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent downEvent, MotionEvent event, float distanceX, float distanceY) {
-            float downX = downEvent.getX();
-
-            float moveX = event.getX() - downEvent.getX();
-            float moveY = event.getY() - downEvent.getY();
-
-            float xDiff = Math.abs(moveX);
-            float yDiff = Math.abs(moveY);
-
-            if (!mVolChanging && !mScreenBrightChanging && !mSeek) {
-                if (yDiff > xDiff) {
-                    if (downX > getWidth() / 2) {
-                        mVolChanging = true;
-                        mProgressVolume.setVisibility(VISIBLE);
-                        AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-                        mVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
-                    } else {
-                        mScreenBrightChanging = true;
-                        mProgressScreenBright.setVisibility(VISIBLE);
-                        if (getContext() instanceof Activity) {
-                            WindowManager.LayoutParams windowParams = ((Activity) getContext()).getWindow().getAttributes();
-                            mScreenBrightness = windowParams.screenBrightness;
-                            if (mScreenBrightness == -1) {
-                                mScreenBrightness = getSysScreenBrightnessInFloat(mScreenBrightness);
-                            }
-                        }
-                    }
-                } else {
-                    mSeek = true;
-                    mCurrentPosition = mPlayer.getCurrentPosition();
-                    mLayoutSeek.setVisibility(VISIBLE);
-                }
-            } else if (mVolChanging) {
-                int dVol = (int) (-moveY * 0.02);
-
-                int streamType = AudioManager.STREAM_MUSIC;
-                AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-                am.setStreamVolume(streamType, mVolume + dVol, 0);
-
-                int volume = am.getStreamVolume(streamType);
-                int maxVolume = am.getStreamMaxVolume(streamType);
-
-                mProgressVolume.setProgress((int) (volume * 1f / maxVolume * mProgressVolume.getMax()));
-
-            } else if (mScreenBrightChanging) {
-                if (getContext() instanceof Activity) {
-
-                    float changeBright = (float) (-moveY * 0.002);
-
-                    Window window = ((Activity) getContext()).getWindow();
-                    WindowManager.LayoutParams params = window.getAttributes();
-
-                    params.screenBrightness = mScreenBrightness + changeBright;
-                    if (params.screenBrightness > 1) {
-                        params.screenBrightness = 1;
-                    } else if (params.screenBrightness < 0) {
-                        params.screenBrightness = 0;
-                    }
-                    window.setAttributes(params);
-
-                    mProgressScreenBright.setProgress((int) (params.screenBrightness * mProgressScreenBright.getMax()));
-                    mProgressScreenBright.setText(String.format("%.1f", params.screenBrightness));
-                }
-            } else if (mSeek) {
-                long duration = mPlayer.getDuration();
-
-
-                int controllerWidth = getWidth();
-                int dSeek = 0;
-                if (controllerWidth != 0) {
-                    dSeek = (int) (duration / controllerWidth * moveX * 1.5);
-                }
-                long seekTo = mCurrentPosition + dSeek;
-                seekTo = Math.max(0, Math.min(duration, seekTo));
-                float present = 0;
-                if (duration != 0) {
-                    present = seekTo * 1f / duration;
-                }
-
-                mSeekTo = (int) seekTo;
-
-                mTvSeekPosition.setText(TimeUtil.formatDuration(seekTo));
-                mTvSeekDuration.setText(TimeUtil.formatDuration(duration));
-                mProgressBarSeek.setProgress((int) (present * mProgressBarSeek.getMax()));
-            }
-
-            return false;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-            KLog.d(TAG, "e = " + e);
-        }
-
-        @Override
-        public boolean onFling(MotionEvent downEvent, MotionEvent event, float velocityX, float velocityY) {
-            KLog.d(TAG, "velocityX = " + velocityX + ", velocityY = " + velocityY);
-            return true;
+        public void onClick(View v) {
+            onClickBtnPlay();
         }
     };
 
-    private android.view.GestureDetector.OnDoubleTapListener mOnDoubleTapListener = new android.view.GestureDetector.OnDoubleTapListener() {
+    private final SeekBar.OnSeekBarChangeListener mSeekListener = new SeekBar.OnSeekBarChangeListener() {
+
         @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            KLog.i(TAG, "e = " + e);
-            if (isShowing()) {
-                hide();
-            } else {
-                show();
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (!fromUser) {
+                return;
             }
-            return true;
         }
 
         @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            KLog.i(TAG, "e = " + e);
-            return true;
-        }
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            long duration = mPlayer.getDuration();
+            float percent = mProgress.getProgress() * 1f / mProgress.getMax();
+            long newPosition = (long) (duration * percent);
+            mPlayer.seeKTo((int) newPosition);
+            if (mTvCurrentPosition != null) {
+                mTvCurrentPosition.setText(TimeUtil.formatDuration(newPosition));
+            }
 
-        @Override
-        public boolean onDoubleTapEvent(MotionEvent e) {
-            KLog.i(TAG, "e = " + e);
-            return true;
+            setProgress();
+            updateBtnPlay();
         }
     };
+
+    protected void setProgress() {
+        IMediaController player = mPlayer;
+        if (player == null) {
+            return;
+        }
+
+        long currentPosition = player.getCurrentPosition();
+        long duration = player.getDuration();
+
+        if (player.getState() == IMediaController.State.PLAYBACK_COMPLETED) {
+            mProgress.setProgress(mProgress.getMax());
+            mTvCurrentPosition.setText(TimeUtil.formatDuration(duration));
+            return;
+        }
+
+        if (mProgress != null) {
+            if (duration > 0) {
+                float percent = currentPosition * 1f / duration;
+                mProgress.setProgress((int) (mProgress.getMax() * percent));
+            }
+            mProgress.setSecondaryProgress((int) (mProgress.getMax() * mPlayer.getBufferPercentage()));
+        }
+
+        if (mTvCurrentPosition != null) {
+            mTvCurrentPosition.setText(TimeUtil.formatDuration(currentPosition));
+        }
+
+        if (mTvDuration != null) {
+            mTvDuration.setText(TimeUtil.formatDuration(duration));
+
+        }
+    }
+
 
     public abstract static class Detector {
         protected final GestureController mController;
@@ -298,5 +304,7 @@ public class GestureController extends Controller {
         public abstract void onControllerSizeChanged(int w, int h, int oldw, int oldh);
 
         public abstract boolean onTouchEvent(MotionEvent event);
+
+        public abstract boolean isHandling();
     }
 }

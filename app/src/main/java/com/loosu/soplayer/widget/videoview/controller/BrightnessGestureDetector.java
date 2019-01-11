@@ -11,7 +11,6 @@ import android.view.WindowManager;
 
 public class BrightnessGestureDetector extends AbsGestureDetector {
 
-    private boolean mHandling = false;
     private float mScreenBrightness;
 
     public BrightnessGestureDetector(Context context, GestureController controller) {
@@ -81,11 +80,6 @@ public class BrightnessGestureDetector extends AbsGestureDetector {
         }
 
         return true;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-
     }
 
     /**

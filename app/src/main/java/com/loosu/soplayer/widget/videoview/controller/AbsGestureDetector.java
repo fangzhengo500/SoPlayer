@@ -9,11 +9,12 @@ import android.view.MotionEvent;
 import com.loosu.soplayer.utils.KLog;
 
 
-public class AbsGestureDetector extends GestureController.Detector implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+public abstract class AbsGestureDetector extends GestureController.Detector implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
     private static final String TAG = "AbsGestureDetector";
-    
+
     protected final Context mContext;
 
+    protected boolean mHandling = false;
     protected final RectF mTriggerRect = new RectF();
     protected final RectF mControlRect = new RectF();
     private final GestureDetector mDetector;
@@ -33,6 +34,11 @@ public class AbsGestureDetector extends GestureController.Detector implements Ge
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return mDetector.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean isHandling() {
+        return mHandling;
     }
 
     @Override

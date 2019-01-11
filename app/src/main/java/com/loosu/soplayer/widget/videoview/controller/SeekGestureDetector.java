@@ -5,17 +5,17 @@ import android.media.AudioManager;
 import android.view.MotionEvent;
 
 
-public class VolumeGestureDetector extends AbsGestureDetector {
+public class SeekGestureDetector extends AbsGestureDetector {
 
-    private int mVolume;
+    private long mSeek;
 
-    public VolumeGestureDetector(Context context, GestureController controller) {
+    public SeekGestureDetector(Context context, GestureController controller) {
         super(context, controller);
     }
 
     @Override
     public void onControllerSizeChanged(int w, int h, int oldw, int oldh) {
-        mTriggerRect.set(w / 2, 0, w, h);
+        mTriggerRect.set(0, 0, w, h);
         mControlRect.set(0, 0, w, h);
     }
 
@@ -26,7 +26,7 @@ public class VolumeGestureDetector extends AbsGestureDetector {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 mHandling = false;
-                mController.hideVolumeChange();
+                mController.hideSeekChange();
                 break;
         }
         return super.onTouchEvent(event);
@@ -35,8 +35,7 @@ public class VolumeGestureDetector extends AbsGestureDetector {
     @Override
     public boolean onDown(MotionEvent e) {
         super.onDown(e);
-        AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-        mVolume = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+        mSeek = mController.getCurrentPosition();
         return true;
     }
 
@@ -52,20 +51,20 @@ public class VolumeGestureDetector extends AbsGestureDetector {
         float yDiff = Math.abs(moveY);
 
         if (!mHandling) {
-            if (yDiff > xDiff && mTriggerRect.contains(downEventX, downEventY)) {
+            if (yDiff < xDiff) {
                 mHandling = true;
             }
         } else {
-            int dVol = (int) (-moveY * 0.02);
+            long duration = mController.getDuration();
 
-            int streamType = AudioManager.STREAM_MUSIC;
-            AudioManager am = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-            am.setStreamVolume(streamType, mVolume + dVol, 0);
-
-            int volume = am.getStreamVolume(streamType);
-            int maxVolume = am.getStreamMaxVolume(streamType);
-
-            mController.showVolumeChange(volume * 1f / maxVolume);
+            int controllerWidth = mController.getWidth();
+            int dSeek = 0;
+            if (controllerWidth != 0) {
+                dSeek = (int) (duration / controllerWidth * moveX * 1.5);
+            }
+            long seekTo = mSeek + dSeek;
+            seekTo = Math.max(0, Math.min(duration, seekTo));
+            mController.showSeekChange(seekTo, duration);
         }
 
         return true;
