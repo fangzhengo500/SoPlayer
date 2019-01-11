@@ -23,7 +23,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class SoVideoView extends AbsSoVideoView implements View.OnClickListener {
     private static final String TAG = "BaseSoVideoView";
 
-    private IMediaPlayer mPlayer = new IjkMediaPlayer();
+    private IjkMediaPlayer mPlayer = new IjkMediaPlayer();
 
     private float mBufferPercentage;
 
@@ -74,6 +74,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         super.setDataSource(context, uri);
 
         mIvCover.setVisibility(VISIBLE);
+        mSurfaceView.setVisibility(GONE);
         Glide.with(this)
                 .load(uri)
                 .into(mIvCover);
@@ -84,6 +85,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         super.setDataSource(path);
 
         mIvCover.setVisibility(VISIBLE);
+        mSurfaceView.setVisibility(GONE);
         Glide.with(this)
                 .load(path)
                 .into(mIvCover);

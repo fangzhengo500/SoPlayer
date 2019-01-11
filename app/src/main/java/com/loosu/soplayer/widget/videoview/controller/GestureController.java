@@ -2,9 +2,10 @@ package com.loosu.soplayer.widget.videoview.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.RectF;
 import android.media.AudioManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -16,6 +17,9 @@ import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.TimeUtil;
 import com.loosu.soplayer.widget.SoProgressBar;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GestureController extends Controller {
     private static final String TAG = "GestureController";
@@ -36,13 +40,18 @@ public class GestureController extends Controller {
     private TextView mTvSeekDuration;
     private ProgressBar mProgressBarSeek;
 
-    private final GestureDetector mGestureDetector;
+    private final android.view.GestureDetector mGestureDetector;
+
+    private final List<Detector> mDetectors = new ArrayList<>();
+
     private int mSeekTo = -1;
 
     public GestureController(@NonNull Context context) {
         super(context);
-        mGestureDetector = new GestureDetector(context, mGestureListener);
+        mGestureDetector = new android.view.GestureDetector(context, mGestureListener);
         mGestureDetector.setOnDoubleTapListener(mOnDoubleTapListener);
+        mDetectors.add(new VolumeGestureDetector(getContext(), this));
+        mDetectors.add(new BrightnessGestureDetector(getContext(), this));
     }
 
     @Override
@@ -65,30 +74,77 @@ public class GestureController extends Controller {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        for (Detector detector : mDetectors) {
+            detector.onControllerSizeChanged(w, h, oldw, oldh);
+        }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        final int action = event.getAction();
-        switch (action) {
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
-                mVolChanging = false;
-                mScreenBrightChanging = false;
-                mSeek = false;
-                mProgressVolume.setVisibility(GONE);
-                mProgressScreenBright.setVisibility(GONE);
-                mLayoutSeek.setVisibility(GONE);
-                if (mSeekTo != -1) {
-                    mPlayer.seeKTo(mSeekTo);
-                    mSeekTo = -1;
-                }
-                break;
+        //List<Detector> handlingDetectors = findHandlingDetectors();
+        for (int i = 0; i < mDetectors.size(); i++) {
+            mDetectors.get(i).onTouchEvent(event);
         }
-        return mGestureDetector.onTouchEvent(event);
+        return true;
+//        if (mPlayer != null && mPlayer.isPlaying()) {
+//            final int action = event.getAction();
+//            switch (action) {
+//                case MotionEvent.ACTION_CANCEL:
+//                case MotionEvent.ACTION_UP:
+//                    mVolChanging = false;
+//                    mScreenBrightChanging = false;
+//                    mSeek = false;
+//                    mProgressVolume.setVisibility(GONE);
+//                    mProgressScreenBright.setVisibility(GONE);
+//                    mLayoutSeek.setVisibility(GONE);
+//                    if (mSeekTo != -1) {
+//                        mPlayer.seeKTo(mSeekTo);
+//                        mSeekTo = -1;
+//                    }
+//                    break;
+//            }
+//            return mGestureDetector.onTouchEvent(event);
+//        } else {
+//            return super.onTouchEvent(event);
+//        }
     }
 
-    private GestureDetector.OnGestureListener mGestureListener = new GestureDetector.OnGestureListener() {
+    public void showBrightChange(float present) {
+        mProgressScreenBright.setVisibility(VISIBLE);
+        mProgressScreenBright.setProgress((int) (mProgressScreenBright.getMax() * present));
+        mProgressScreenBright.setText(String.format("%.1f", present));
+    }
+
+    public void hideBrightChange() {
+        mProgressScreenBright.setVisibility(GONE);
+    }
+
+    public void showVolumeChange(float present) {
+        mProgressVolume.setVisibility(VISIBLE);
+        mProgressVolume.setProgress((int) (mProgressVolume.getMax() * present));
+        mProgressVolume.setText(String.format("%.1f", present));
+    }
+
+    public void hideVolumeChange() {
+        mProgressVolume.setVisibility(GONE);
+    }
+
+    /**
+     * @param defaultBrightness
+     * @return [0 ~ 1]
+     */
+    private float getSysScreenBrightnessInFloat(float defaultBrightness) {
+        float result = defaultBrightness;
+        try {
+            int sysBrightness = Settings.System.getInt(getContext().getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+            result = sysBrightness * 1f / 255;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private android.view.GestureDetector.OnGestureListener mGestureListener = new android.view.GestureDetector.OnGestureListener() {
         @Override
         public boolean onDown(MotionEvent e) {
             return true;
@@ -108,7 +164,6 @@ public class GestureController extends Controller {
         @Override
         public boolean onScroll(MotionEvent downEvent, MotionEvent event, float distanceX, float distanceY) {
             float downX = downEvent.getX();
-            float downY = downEvent.getY();
 
             float moveX = event.getX() - downEvent.getX();
             float moveY = event.getY() - downEvent.getY();
@@ -129,6 +184,9 @@ public class GestureController extends Controller {
                         if (getContext() instanceof Activity) {
                             WindowManager.LayoutParams windowParams = ((Activity) getContext()).getWindow().getAttributes();
                             mScreenBrightness = windowParams.screenBrightness;
+                            if (mScreenBrightness == -1) {
+                                mScreenBrightness = getSysScreenBrightnessInFloat(mScreenBrightness);
+                            }
                         }
                     }
                 } else {
@@ -168,14 +226,24 @@ public class GestureController extends Controller {
                     mProgressScreenBright.setText(String.format("%.1f", params.screenBrightness));
                 }
             } else if (mSeek) {
-                mSeekTo = (int) (mCurrentPosition + moveX * 5);
                 long duration = mPlayer.getDuration();
+
+
+                int controllerWidth = getWidth();
+                int dSeek = 0;
+                if (controllerWidth != 0) {
+                    dSeek = (int) (duration / controllerWidth * moveX * 1.5);
+                }
+                long seekTo = mCurrentPosition + dSeek;
+                seekTo = Math.max(0, Math.min(duration, seekTo));
                 float present = 0;
                 if (duration != 0) {
-                    present = mSeekTo * 1f / duration;
+                    present = seekTo * 1f / duration;
                 }
 
-                mTvSeekPosition.setText(TimeUtil.formatDuration(mSeekTo));
+                mSeekTo = (int) seekTo;
+
+                mTvSeekPosition.setText(TimeUtil.formatDuration(seekTo));
                 mTvSeekDuration.setText(TimeUtil.formatDuration(duration));
                 mProgressBarSeek.setProgress((int) (present * mProgressBarSeek.getMax()));
             }
@@ -195,7 +263,7 @@ public class GestureController extends Controller {
         }
     };
 
-    private GestureDetector.OnDoubleTapListener mOnDoubleTapListener = new GestureDetector.OnDoubleTapListener() {
+    private android.view.GestureDetector.OnDoubleTapListener mOnDoubleTapListener = new android.view.GestureDetector.OnDoubleTapListener() {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             KLog.i(TAG, "e = " + e);
@@ -219,4 +287,16 @@ public class GestureController extends Controller {
             return true;
         }
     };
+
+    public abstract static class Detector {
+        protected final GestureController mController;
+
+        public Detector(GestureController controller) {
+            mController = controller;
+        }
+
+        public abstract void onControllerSizeChanged(int w, int h, int oldw, int oldh);
+
+        public abstract boolean onTouchEvent(MotionEvent event);
+    }
 }
