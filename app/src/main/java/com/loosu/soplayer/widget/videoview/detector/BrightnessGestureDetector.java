@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.loosu.soplayer.widget.videoview.controller.GestureController;
+import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
 
 
 public class BrightnessGestureDetector extends AbsGestureDetector {

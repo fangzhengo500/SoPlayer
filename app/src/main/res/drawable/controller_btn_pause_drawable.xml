@@ -4,13 +4,13 @@
         <ripple android:color="@color/ripple_color">
             <item>
                 <shape android:shape="oval">
-                    <solid android:color="#8fff" />
+                    <solid android:color="#5DDD" />
                 </shape>
             </item>
         </ripple>
     </item>
     <item>
-        <inset android:inset="15%">
+        <inset android:inset="18%">
             <bitmap android:src="@drawable/ic_action_pause" />
         </inset>
     </item>

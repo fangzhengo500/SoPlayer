@@ -35,7 +35,7 @@ public class VideoCardAdapter extends DocumentVideoAdapter {
         VideoEntry videoEntry = getItem(position);
 
         holder.setText(R.id.tv_title, videoEntry.getDisplayName());
-        holder.setText(R.id.tv_duration, TimeUtil.formatDuration(videoEntry.getDuration()));
+        holder.setText(R.id.tv_bottom_duration, TimeUtil.formatDuration(videoEntry.getDuration()));
         holder.setText(R.id.tv_size, Formatter.formatShortFileSize(context, videoEntry.getSize()));
         holder.setText(R.id.tv_display_size, videoEntry.getWidth() + "X" + videoEntry.getHeight());
 

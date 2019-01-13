@@ -6,7 +6,6 @@ import android.text.format.Formatter;
 import android.webkit.MimeTypeMap;
 
 import com.loosu.soplayer.R;
-import com.loosu.soplayer.adapter.base.recyclerview.ARecyclerAdapter;
 import com.loosu.soplayer.adapter.base.recyclerview.RecyclerHolder;
 import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.utils.TimeUtil;
@@ -31,7 +30,7 @@ public class VideoSimpleAdapter extends DocumentVideoAdapter {
         VideoEntry videoEntry = getItem(position);
 
         holder.setText(R.id.tv_title, videoEntry.getDisplayName());
-        holder.setText(R.id.tv_duration, TimeUtil.formatDuration(videoEntry.getDuration()));
+        holder.setText(R.id.tv_bottom_duration, TimeUtil.formatDuration(videoEntry.getDuration()));
         holder.setText(R.id.tv_size, Formatter.formatShortFileSize(context, videoEntry.getSize()));
         holder.setText(R.id.tv_display_size, videoEntry.getWidth() + "X" + videoEntry.getHeight());
 

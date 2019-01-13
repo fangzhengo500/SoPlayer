@@ -5,7 +5,7 @@ import android.graphics.RectF;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import com.loosu.soplayer.widget.videoview.controller.GestureController;
+import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
 
 
 public abstract class AbsGestureDetector extends GestureController.Detector implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {

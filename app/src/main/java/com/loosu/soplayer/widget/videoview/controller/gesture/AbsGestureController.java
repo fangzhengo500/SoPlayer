@@ -1,4 +1,4 @@
-package com.loosu.soplayer.widget.videoview.controller;
+package com.loosu.soplayer.widget.videoview.controller.gesture;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -14,26 +14,34 @@ import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.TimeUtil;
 import com.loosu.soplayer.widget.SoProgressBar;
+import com.loosu.soplayer.widget.videoview.controller.Controller;
 import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 
 import java.util.Locale;
 
 public abstract class AbsGestureController extends Controller {
-    private static final String TAG = "GestureController";
+    private static final String TAG = "AbsGestureController";
 
-    protected SoProgressBar mProgressVolume;          // 手势 - 声量
-    protected SoProgressBar mProgressScreenBright;    // 手势 - 亮度
-    protected View mLayoutSeek;                       // 手势 - 进度
+    // 手势 - 声量
+    protected SoProgressBar mProgressVolume;
+    // 手势 - 亮度
+    protected SoProgressBar mProgressScreenBright;
+    // 手势 - 进度
+    protected View mLayoutSeek;
     protected TextView mTvSeekPosition;
     protected TextView mTvSeekDuration;
     protected ProgressBar mProgressBarSeek;
-
+    // 开始/暂停 按钮
     protected ImageView mBtnPauseOrResume;
+    // 顶部栏
+    protected View mLayoutTop;
+    protected TextView mTvTitle;
 
+    // 底部栏
     protected View mLayoutBottom;
-    protected TextView mTvCurrentPosition;
-    protected TextView mTvDuration;
-    protected SeekBar mProgress;
+    protected TextView mTvBottomCurrentPosition;
+    protected TextView mTvBottomDuration;
+    protected SeekBar mBottomSeekBar;
 
     public AbsGestureController(@NonNull Context context) {
         super(context);
@@ -51,40 +59,75 @@ public abstract class AbsGestureController extends Controller {
         // 开始 or 暂停
         mBtnPauseOrResume = findViewById(R.id.btn_pause_or_resume);
 
-        // 底部进度栏
+        // 顶部栏
+        mLayoutTop = findViewById(R.id.layout_top);
+        mTvTitle = findViewById(R.id.tv_title);
+        // 底部栏
         mLayoutBottom = findViewById(R.id.layout_bottom);
-        mTvCurrentPosition = findViewById(R.id.tv_current_position);
-        mTvDuration = findViewById(R.id.tv_duration);
-        mProgress = findViewById(R.id.progress);
+        mTvBottomCurrentPosition = findViewById(R.id.tv_bottom_current_position);
+        mTvBottomDuration = findViewById(R.id.tv_bottom_duration);
+        mBottomSeekBar = findViewById(R.id.bottom_seekbar);
 
 
         mBtnPauseOrResume.setOnClickListener(mClickListener);
-        mProgress.setOnSeekBarChangeListener(mSeekListener);
+        mBottomSeekBar.setOnSeekBarChangeListener(mSeekListener);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        removeCallbacks(mHideRunnable);
+        removeCallbacks(mProgressUpdateRunnable);
     }
 
     @Override
     public void show() {
-        if (isShowing()) {
-            return;
-        }
-
         super.show();
-        mBtnPauseOrResume.setVisibility(VISIBLE);
-        mLayoutBottom.setVisibility(VISIBLE);
+        showBtnPauseOrResume();
+        showLayoutTop();
+        showLayoutBottom();
+
+        // 自动隐藏
+        KLog.w(TAG, "2s 后自动隐藏.");
+        removeCallbacks(mHideRunnable);
+        postDelayed(mHideRunnable, 2000);
+        mProgressUpdateRunnable.run();
     }
 
     @Override
     public void hide() {
-        if (!isShowing()) {
-            return;
-        }
-
         super.hide();
-        mBtnPauseOrResume.setVisibility(GONE);
-        mLayoutBottom.setVisibility(GONE);
+        hideBtnPauseOrResume();
+        hideLayoutTop();
+        hideLayoutBottom();
         hideBrightChange();
         hideVolumeChange();
         hideSeekChange();
+        removeCallbacks(mProgressUpdateRunnable);
+    }
+
+    protected void showLayoutTop() {
+        mLayoutTop.setVisibility(VISIBLE);
+    }
+
+    protected void hideLayoutTop() {
+        mLayoutTop.setVisibility(GONE);
+    }
+
+    protected void showBtnPauseOrResume() {
+        mBtnPauseOrResume.setVisibility(VISIBLE);
+    }
+
+    protected void hideBtnPauseOrResume() {
+        mBtnPauseOrResume.setVisibility(GONE);
+    }
+
+    protected void showLayoutBottom() {
+        mLayoutBottom.setVisibility(VISIBLE);
+    }
+
+    protected void hideLayoutBottom() {
+        mLayoutBottom.setVisibility(GONE);
     }
 
     public void showBrightChange(float present) {
@@ -127,6 +170,49 @@ public abstract class AbsGestureController extends Controller {
         return mPlayer == null ? 0 : mPlayer.getCurrentPosition();
     }
 
+    private void onClickBtnPlay() {
+        startOrPausePlayer();
+        updateBtnPlay();
+        show();
+    }
+
+    private final OnClickListener mClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            onClickBtnPlay();
+        }
+    };
+
+    private final SeekBar.OnSeekBarChangeListener mSeekListener = new SeekBar.OnSeekBarChangeListener() {
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            removeCallbacks(mHideRunnable);
+        }
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (!fromUser) {
+                return;
+            }
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            long duration = mPlayer.getDuration();
+            float percent = mBottomSeekBar.getProgress() * 1f / mBottomSeekBar.getMax();
+            long newPosition = (long) (duration * percent);
+            mPlayer.seeKTo((int) newPosition);
+            if (mTvBottomCurrentPosition != null) {
+                mTvBottomCurrentPosition.setText(TimeUtil.formatDuration(newPosition));
+            }
+
+            updateProgress();
+            updateBtnPlay();
+        }
+    };
+
     public void updateBtnPlay() {
         if (mBtnPauseOrResume == null)
             return;
@@ -144,81 +230,59 @@ public abstract class AbsGestureController extends Controller {
         }
     }
 
-    private void onClickBtnPlay() {
-        startOrPausePlayer();
-        updateBtnPlay();
-    }
-
-    private final OnClickListener mClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            onClickBtnPlay();
-        }
-    };
-
-    private final SeekBar.OnSeekBarChangeListener mSeekListener = new SeekBar.OnSeekBarChangeListener() {
-
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-
-        }
-
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (!fromUser) {
-                return;
-            }
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-            long duration = mPlayer.getDuration();
-            float percent = mProgress.getProgress() * 1f / mProgress.getMax();
-            long newPosition = (long) (duration * percent);
-            mPlayer.seeKTo((int) newPosition);
-            if (mTvCurrentPosition != null) {
-                mTvCurrentPosition.setText(TimeUtil.formatDuration(newPosition));
-            }
-
-            setProgress();
-            updateBtnPlay();
-        }
-    };
-
-    protected void setProgress() {
-        IMediaController player = mPlayer;
+    protected void updateProgress() {
+        final IMediaController player = mPlayer;
         if (player == null) {
             return;
         }
 
-        long currentPosition = player.getCurrentPosition();
-        long duration = player.getDuration();
+        final long currentPosition = player.getCurrentPosition();
+        final long duration = player.getDuration();
 
         if (player.getState() == IMediaController.State.PLAYBACK_COMPLETED) {
-            mProgress.setProgress(mProgress.getMax());
-            mTvCurrentPosition.setText(TimeUtil.formatDuration(duration));
+            mBottomSeekBar.setProgress(mBottomSeekBar.getMax());
+            mTvBottomCurrentPosition.setText(TimeUtil.formatDuration(duration));
+            updateBtnPlay();
             return;
         }
 
-        if (mProgress != null) {
+        if (mBottomSeekBar != null) {
             if (duration > 0) {
                 float percent = currentPosition * 1f / duration;
-                mProgress.setProgress((int) (mProgress.getMax() * percent));
+                mBottomSeekBar.setProgress((int) (mBottomSeekBar.getMax() * percent));
             }
-            mProgress.setSecondaryProgress((int) (mProgress.getMax() * mPlayer.getBufferPercentage()));
+            mBottomSeekBar.setSecondaryProgress((int) (mBottomSeekBar.getMax() * mPlayer.getBufferPercentage()));
         }
 
-        if (mTvCurrentPosition != null) {
-            mTvCurrentPosition.setText(TimeUtil.formatDuration(currentPosition));
+        if (mTvBottomCurrentPosition != null) {
+            mTvBottomCurrentPosition.setText(TimeUtil.formatDuration(currentPosition));
         }
 
-        if (mTvDuration != null) {
-            mTvDuration.setText(TimeUtil.formatDuration(duration));
+        if (mTvBottomDuration != null) {
+            mTvBottomDuration.setText(TimeUtil.formatDuration(duration));
 
         }
     }
 
+    public void setTitle(CharSequence text) {
+        mTvTitle.setText(text);
+    }
+
+    private Runnable mHideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            hide();
+        }
+    };
+
+    private Runnable mProgressUpdateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            updateProgress();
+            removeCallbacks(mProgressUpdateRunnable);
+            postDelayed(mProgressUpdateRunnable, 1000);
+        }
+    };
 
     public abstract static class Detector {
         protected final AbsGestureController mController;

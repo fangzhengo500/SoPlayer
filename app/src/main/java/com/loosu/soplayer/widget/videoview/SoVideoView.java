@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
-import com.loosu.soplayer.widget.videoview.controller.GestureController;
+import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
 import com.loosu.soplayer.widget.videoview.interfaces.IController;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;

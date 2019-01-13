@@ -62,7 +62,7 @@
                 tools:progress="100" />
 
             <TextView
-                android:id="@+id/tv_duration"
+                android:id="@+id/tv_bottom_duration"
                 style="@style/VideoSimpleInfoTextStyle"
                 tools:text="03:07" />
 

@@ -13,7 +13,7 @@ public class Controller extends FrameLayout implements IController {
     private static final String TAG = "AbsSoVideoView";
 
     protected IMediaController mPlayer;
-    private boolean mShowing = true;
+    protected boolean mShowing = true;
 
 
     public Controller(@NonNull Context context) {

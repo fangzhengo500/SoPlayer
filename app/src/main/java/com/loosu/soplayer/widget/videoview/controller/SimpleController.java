@@ -40,9 +40,9 @@ public class SimpleController extends Controller implements IController {
     protected void initController(@NonNull Context context) {
         mBtnPauseOrResume = findViewById(R.id.btn_pause_or_resume);
 
-        mTvCurrentPosition = findViewById(R.id.tv_current_position);
-        mTvDuration = findViewById(R.id.tv_duration);
-        mProgress = findViewById(R.id.progress);
+        mTvCurrentPosition = findViewById(R.id.tv_bottom_current_position);
+        mTvDuration = findViewById(R.id.tv_bottom_duration);
+        mProgress = findViewById(R.id.bottom_seekbar);
 
         mBtnPauseOrResume.setOnClickListener(mClickListener);
         mProgress.setOnSeekBarChangeListener(mSeekListener);

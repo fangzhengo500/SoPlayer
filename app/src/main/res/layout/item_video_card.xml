@@ -43,7 +43,7 @@
                 android:background="#3000" />
 
             <TextView
-                android:id="@+id/tv_duration"
+                android:id="@+id/tv_bottom_duration"
                 style="@style/VideoSimpleInfoTextStyle"
                 android:layout_marginTop="@dimen/item_video_card_margin_top"
                 tools:text="03:07" />

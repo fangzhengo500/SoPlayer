@@ -1,4 +1,4 @@
-package com.loosu.soplayer.widget.videoview.controller;
+package com.loosu.soplayer.widget.videoview.controller.gesture;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -17,6 +17,64 @@ public abstract class AnimationGestureController extends AbsGestureController {
 
     public AnimationGestureController(@NonNull Context context) {
         super(context);
+    }
+
+    @Override
+    protected void showBtnPauseOrResume() {
+        PropertyValuesHolder[] holders = {
+                PropertyValuesHolder.ofFloat(View.ALPHA, mBtnPauseOrResume.getAlpha(), 1),
+        };
+        ObjectAnimator btnPauseOrResumeShowAnimator = ObjectAnimator.ofPropertyValuesHolder(mBtnPauseOrResume, holders);
+        btnPauseOrResumeShowAnimator.start();
+    }
+
+    @Override
+    protected void hideBtnPauseOrResume() {
+        PropertyValuesHolder[] holders = {
+                PropertyValuesHolder.ofFloat(View.ALPHA, mBtnPauseOrResume.getAlpha(), 0),
+        };
+        ObjectAnimator btnPauseOrResumeHideAnimator = ObjectAnimator.ofPropertyValuesHolder(mBtnPauseOrResume, holders);
+        btnPauseOrResumeHideAnimator.start();
+    }
+
+    @Override
+    protected void showLayoutTop() {
+        PropertyValuesHolder[] holders = {
+                PropertyValuesHolder.ofFloat(View.ALPHA, mLayoutTop.getAlpha(), 1),
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, mLayoutTop.getTranslationY(), 0),
+        };
+        ObjectAnimator layoutTopShowAnimator = ObjectAnimator.ofPropertyValuesHolder(mLayoutTop, holders);
+        layoutTopShowAnimator.start();
+    }
+
+    @Override
+    protected void hideLayoutTop() {
+        PropertyValuesHolder[] holders = {
+                PropertyValuesHolder.ofFloat(View.ALPHA, mLayoutTop.getAlpha(), 0),
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, mLayoutTop.getTranslationY(), -mLayoutTop.getHeight()),
+        };
+        ObjectAnimator layoutTopHideAnimator = ObjectAnimator.ofPropertyValuesHolder(mLayoutTop, holders);
+        layoutTopHideAnimator.start();
+    }
+
+    @Override
+    protected void showLayoutBottom() {
+        PropertyValuesHolder[] holders = {
+                PropertyValuesHolder.ofFloat(View.ALPHA, mLayoutBottom.getAlpha(), 1),
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, mLayoutBottom.getTranslationY(), 0),
+        };
+        ObjectAnimator layoutBottomShowAnimator = ObjectAnimator.ofPropertyValuesHolder(mLayoutBottom, holders);
+        layoutBottomShowAnimator.start();
+    }
+
+    @Override
+    protected void hideLayoutBottom() {
+        PropertyValuesHolder[] holders = {
+                PropertyValuesHolder.ofFloat(View.ALPHA, mLayoutBottom.getAlpha(), 0),
+                PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, mLayoutBottom.getTranslationY(), mLayoutBottom.getHeight()),
+        };
+        ObjectAnimator layoutBottomHideAnimator = ObjectAnimator.ofPropertyValuesHolder(mLayoutBottom, holders);
+        layoutBottomHideAnimator.start();
     }
 
     @Override
@@ -77,4 +135,5 @@ public abstract class AnimationGestureController extends AbsGestureController {
             animator.cancel();
         }
     }
+
 }

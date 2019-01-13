@@ -111,7 +111,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
         mTvDataSource = findViewById(R.id.tv_data_source);
         mTvVideoSize = findViewById(R.id.tv_video_size);
         mTvIsPlaying = findViewById(R.id.tv_is_playing);
-        mTvDuration = findViewById(R.id.tv_duration);
+        mTvDuration = findViewById(R.id.tv_bottom_duration);
         mTvMediaInfo = findViewById(R.id.tv_media_info);
 
         mToggleScreenOnWhilePlaying = findViewById(R.id.toggle_screen_on_while_playing);

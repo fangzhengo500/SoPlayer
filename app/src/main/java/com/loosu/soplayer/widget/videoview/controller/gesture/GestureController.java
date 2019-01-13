@@ -1,8 +1,9 @@
-package com.loosu.soplayer.widget.videoview.controller;
+package com.loosu.soplayer.widget.videoview.controller.gesture;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.MotionEvent;
+
 import com.loosu.soplayer.widget.videoview.detector.BrightnessGestureDetector;
 import com.loosu.soplayer.widget.videoview.detector.ClickDetector;
 import com.loosu.soplayer.widget.videoview.detector.SeekGestureDetector;
