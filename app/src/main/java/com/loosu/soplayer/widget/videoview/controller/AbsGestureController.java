@@ -14,32 +14,26 @@ import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.TimeUtil;
 import com.loosu.soplayer.widget.SoProgressBar;
-import com.loosu.soplayer.widget.videoview.detector.BrightnessGestureDetector;
-import com.loosu.soplayer.widget.videoview.detector.ClickDetector;
-import com.loosu.soplayer.widget.videoview.detector.SeekGestureDetector;
-import com.loosu.soplayer.widget.videoview.detector.VolumeGestureDetector;
 import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 
 public abstract class AbsGestureController extends Controller {
     private static final String TAG = "GestureController";
 
-    private boolean mShowing = true;
+    protected SoProgressBar mProgressVolume;          // 手势 - 声量
+    protected SoProgressBar mProgressScreenBright;    // 手势 - 亮度
+    protected View mLayoutSeek;                       // 手势 - 进度
+    protected TextView mTvSeekPosition;
+    protected TextView mTvSeekDuration;
+    protected ProgressBar mProgressBarSeek;
 
-    private SoProgressBar mProgressVolume;          // 手势 - 声量
-    private SoProgressBar mProgressScreenBright;    // 手势 - 亮度
-    private View mLayoutSeek;                       // 手势 - 进度
-    private TextView mTvSeekPosition;
-    private TextView mTvSeekDuration;
-    private ProgressBar mProgressBarSeek;
+    protected ImageView mBtnPauseOrResume;
 
-    private ImageView mBtnPauseOrResume;
-
-    private TextView mTvCurrentPosition;
-    private TextView mTvDuration;
-    private SeekBar mProgress;
+    protected View mLayoutBottom;
+    protected TextView mTvCurrentPosition;
+    protected TextView mTvDuration;
+    protected SeekBar mProgress;
 
     public AbsGestureController(@NonNull Context context) {
         super(context);
@@ -58,6 +52,7 @@ public abstract class AbsGestureController extends Controller {
         mBtnPauseOrResume = findViewById(R.id.btn_pause_or_resume);
 
         // 底部进度栏
+        mLayoutBottom = findViewById(R.id.layout_bottom);
         mTvCurrentPosition = findViewById(R.id.tv_current_position);
         mTvDuration = findViewById(R.id.tv_duration);
         mProgress = findViewById(R.id.progress);
@@ -69,37 +64,33 @@ public abstract class AbsGestureController extends Controller {
 
     @Override
     public void show() {
-        if (mShowing) {
+        if (isShowing()) {
             return;
         }
-        mShowing = true;
+
+        super.show();
         mBtnPauseOrResume.setVisibility(VISIBLE);
-        mLayoutSeek.setVisibility(VISIBLE);
+        mLayoutBottom.setVisibility(VISIBLE);
     }
 
     @Override
     public void hide() {
-        if (!mShowing) {
+        if (!isShowing()) {
             return;
         }
-        mShowing = false;
 
+        super.hide();
         mBtnPauseOrResume.setVisibility(GONE);
-        mLayoutSeek.setVisibility(GONE);
+        mLayoutBottom.setVisibility(GONE);
         hideBrightChange();
         hideVolumeChange();
         hideSeekChange();
     }
 
-    @Override
-    public boolean isShowing() {
-        return mShowing;
-    }
-
     public void showBrightChange(float present) {
         mProgressScreenBright.setVisibility(VISIBLE);
         mProgressScreenBright.setProgress((int) (mProgressScreenBright.getMax() * present));
-        mProgressScreenBright.setText(String.format("%.1f", present));
+        mProgressScreenBright.setText(String.format(Locale.US, "%.1f", present));
     }
 
     public void hideBrightChange() {
@@ -109,7 +100,7 @@ public abstract class AbsGestureController extends Controller {
     public void showVolumeChange(float present) {
         mProgressVolume.setVisibility(VISIBLE);
         mProgressVolume.setProgress((int) (mProgressVolume.getMax() * present));
-        mProgressVolume.setText(String.format("%.1f", present));
+        mProgressVolume.setText(String.format(Locale.US, "%.1f", present));
     }
 
     public void hideVolumeChange() {

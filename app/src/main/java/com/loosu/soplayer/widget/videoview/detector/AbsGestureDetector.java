@@ -2,11 +2,9 @@ package com.loosu.soplayer.widget.videoview.detector;
 
 import android.content.Context;
 import android.graphics.RectF;
-import android.media.AudioManager;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.widget.videoview.controller.GestureController;
 
 

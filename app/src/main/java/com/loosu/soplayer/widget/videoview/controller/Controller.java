@@ -2,16 +2,9 @@ package com.loosu.soplayer.widget.videoview.controller;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
-import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
-import com.loosu.soplayer.utils.TimeUtil;
 import com.loosu.soplayer.widget.videoview.interfaces.IController;
 import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 
@@ -38,17 +31,11 @@ public class Controller extends FrameLayout implements IController {
 
     @Override
     public void show() {
-        if (mShowing) {
-            return;
-        }
         mShowing = true;
     }
 
     @Override
     public void hide() {
-        if (!mShowing) {
-            return;
-        }
         mShowing = false;
     }
 

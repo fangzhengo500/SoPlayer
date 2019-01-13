@@ -11,13 +11,13 @@ import com.loosu.soplayer.widget.videoview.detector.VolumeGestureDetector;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GestureController extends AbsGestureController {
+public class GestureController extends AnimationGestureController {
     private static final String TAG = "GestureController";
-
 
 
     private Detector mHandingDetector = null;
     private final List<Detector> mDetectors = new ArrayList<>();
+
 
     public GestureController(@NonNull Context context) {
         super(context);
