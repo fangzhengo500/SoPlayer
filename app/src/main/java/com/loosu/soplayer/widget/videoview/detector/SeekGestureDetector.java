@@ -9,6 +9,7 @@ import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
 public class SeekGestureDetector extends AbsGestureDetector {
 
     private long mSeek;
+    private long mTargetSeek = -1;
 
     public SeekGestureDetector(Context context, GestureController controller) {
         super(context, controller);
@@ -26,6 +27,12 @@ public class SeekGestureDetector extends AbsGestureDetector {
         switch (action) {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
+                if (mHandling && mTargetSeek != -1) {
+                    mController.seekTo((int) mTargetSeek);
+
+                    long duration = mController.getDuration();
+                    mController.showSeekChange(mTargetSeek, duration);
+                }
                 mHandling = false;
                 mController.hideSeekChange();
                 break;
@@ -57,14 +64,15 @@ public class SeekGestureDetector extends AbsGestureDetector {
             }
         } else {
             long duration = mController.getDuration();
+            long maxSeek = Math.min(30 * 60 * 1000, duration);
 
             int controllerWidth = mController.getWidth();
             int dSeek = 0;
             if (controllerWidth != 0) {
-                dSeek = (int) (duration / controllerWidth * moveX * 1.5);
+                dSeek = (int) (maxSeek / controllerWidth * moveX * 1.5);
             }
             long seekTo = mSeek + dSeek;
-            seekTo = Math.max(0, Math.min(duration, seekTo));
+            mTargetSeek = seekTo = Math.max(0, Math.min(duration, seekTo));
             mController.showSeekChange(seekTo, duration);
         }
 

@@ -203,7 +203,7 @@ public abstract class AbsGestureController extends Controller {
             long duration = mPlayer.getDuration();
             float percent = mBottomSeekBar.getProgress() * 1f / mBottomSeekBar.getMax();
             long newPosition = (long) (duration * percent);
-            mPlayer.seeKTo((int) newPosition);
+            seekTo((int) newPosition);
             if (mTvBottomCurrentPosition != null) {
                 mTvBottomCurrentPosition.setText(TimeUtil.formatDuration(newPosition));
             }
@@ -266,6 +266,12 @@ public abstract class AbsGestureController extends Controller {
 
     public void setTitle(CharSequence text) {
         mTvTitle.setText(text);
+    }
+
+    public void seekTo(int newPosition) {
+        if (mPlayer!=null) {
+            mPlayer.seeKTo(newPosition);
+        }
     }
 
     private Runnable mHideRunnable = new Runnable() {
