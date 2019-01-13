@@ -189,7 +189,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
             case R.id.btn_start:
                 mMediaPlayer.start();
                 boolean playing = mMediaPlayer.isPlaying();
-                KLog.d(TAG, "playing = " + playing);
+                KLog.w(TAG, "playing = " + playing);
                 if (mPlayerState == IMediaController.State.PAUSED) {
                     mPlayerState = IMediaController.State.STARTED;
                 }
@@ -301,7 +301,7 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
 
     @Override
     public void onSeekComplete(IMediaPlayer mp) {
-        KLog.d(TAG, "");
+        KLog.w(TAG, "");
         updateInfo(mMediaPlayer);
     }
 
@@ -377,26 +377,26 @@ public class IjkMediaPlayerTestActivity extends AppCompatActivity implements
     private SurfaceHolder.Callback2 mCallback2 = new SurfaceHolder.Callback2() {
         @Override
         public void surfaceRedrawNeeded(SurfaceHolder holder) {
-            KLog.d(TAG, "holder = " + holder);
+            KLog.w(TAG, "holder = " + holder);
         }
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            KLog.d(TAG, "holder = " + holder);
+            KLog.w(TAG, "holder = " + holder);
             mMediaPlayer.setDisplay(holder);
             updateInfo(mMediaPlayer);
         }
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            KLog.d(TAG, "holder = " + holder + ", format = " + PixelFormatUtil.formatToString(format) + ", width = " + width + ", height = " + height);
+            KLog.w(TAG, "holder = " + holder + ", format = " + PixelFormatUtil.formatToString(format) + ", width = " + width + ", height = " + height);
             updateInfo(mMediaPlayer);
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            KLog.d(TAG, "holder = " + holder);
-            mMediaPlayer.stop();
+            KLog.w(TAG, "holder = " + holder);
+            mMediaPlayer.pause();
             updateInfo(mMediaPlayer);
         }
     };

@@ -73,8 +73,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     public void setDataSource(Context context, Uri uri) {
         super.setDataSource(context, uri);
 
-        mIvCover.setVisibility(VISIBLE);
-        mSurfaceView.setVisibility(GONE);
+        showCover();
         Glide.with(this)
                 .load(uri)
                 .into(mIvCover);
@@ -84,8 +83,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     public void setDataSource(String path) {
         super.setDataSource(path);
 
-        mIvCover.setVisibility(VISIBLE);
-        mSurfaceView.setVisibility(GONE);
+        showCover();
         Glide.with(this)
                 .load(path)
                 .into(mIvCover);
@@ -103,6 +101,12 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     }
 
     @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        super.surfaceDestroyed(holder);
+        showCover();
+    }
+
+    @Override
     protected void onPrepared(IMediaPlayer mp) {
         super.onPrepared(mp);
         if (mController != null) {
@@ -113,7 +117,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     @Override
     protected void onStarted(IMediaPlayer mp) {
         super.onStarted(mp);
-        mIvCover.setVisibility(GONE);
+        showVideo();
     }
 
     @Override
@@ -193,5 +197,16 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
                 break;
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+
+    private void showCover() {
+        mIvCover.setVisibility(VISIBLE);
+        mSurfaceView.setVisibility(GONE);
+    }
+
+    private void showVideo() {
+        mIvCover.setVisibility(GONE);
+        mSurfaceView.setVisibility(VISIBLE);
     }
 }

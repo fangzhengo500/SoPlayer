@@ -12,6 +12,7 @@ import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 public class Controller extends FrameLayout implements IController {
     private static final String TAG = "AbsSoVideoView";
 
+
     protected IMediaController mPlayer;
     protected boolean mShowing = true;
 

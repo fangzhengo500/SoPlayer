@@ -38,6 +38,10 @@ public class GestureController extends AnimationGestureController {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!isEnabled()) {
+            return super.onTouchEvent(event);
+        }
+
         boolean result = false;
 
         // 目前交互设计, 同时只有一个 Detector 可处理触摸事件.

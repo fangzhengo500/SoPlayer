@@ -21,10 +21,17 @@ public abstract class AnimationGestureController extends AbsGestureController {
 
     @Override
     protected void showBtnPauseOrResume() {
+        updateBtnPlay();
         PropertyValuesHolder[] holders = {
                 PropertyValuesHolder.ofFloat(View.ALPHA, mBtnPauseOrResume.getAlpha(), 1),
         };
         ObjectAnimator btnPauseOrResumeShowAnimator = ObjectAnimator.ofPropertyValuesHolder(mBtnPauseOrResume, holders);
+        btnPauseOrResumeShowAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                mBtnPauseOrResume.setVisibility(VISIBLE);
+            }
+        });
         btnPauseOrResumeShowAnimator.start();
     }
 
@@ -34,6 +41,12 @@ public abstract class AnimationGestureController extends AbsGestureController {
                 PropertyValuesHolder.ofFloat(View.ALPHA, mBtnPauseOrResume.getAlpha(), 0),
         };
         ObjectAnimator btnPauseOrResumeHideAnimator = ObjectAnimator.ofPropertyValuesHolder(mBtnPauseOrResume, holders);
+        btnPauseOrResumeHideAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mBtnPauseOrResume.setVisibility(GONE);
+            }
+        });
         btnPauseOrResumeHideAnimator.start();
     }
 

@@ -20,7 +20,7 @@ import java.util.Locale;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkTimedText;
 
-public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, IMediaController {
+public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, IMediaController, SurfaceHolder.Callback2 {
     private static final String TAG = "AbsSoVideoView";
 
     private State mState = State.IDLE;
@@ -140,6 +140,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
             getMediaPlayer().start();
             if (getState() == State.PAUSED || getState() == State.PLAYBACK_COMPLETED) {
                 setState(State.STARTED);
+                onStarted(getMediaPlayer());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,9 +173,37 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
 
     protected void iniSurface() {
         if (getSurfaceHolder() != null) {
-            getSurfaceHolder().addCallback(mSurfaceCallback);
+            getSurfaceHolder().addCallback(this);
         }
     }
+
+    // ********************** surface callback start ***********************
+    @Override
+    public void surfaceRedrawNeeded(SurfaceHolder holder) {
+        KLog.d(TAG, String.format(Locale.US, "holder = %s", holder));
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        KLog.d(TAG, String.format(Locale.US, "holder = %s", holder));
+        if (getMediaPlayer() != null) {
+            getMediaPlayer().setDisplay(holder);
+        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        KLog.d(TAG, String.format(Locale.US, "holder = %s, format = %s, width = %d, height = %d", holder, PixelFormatUtil.formatToString(format), width, height));
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        KLog.d(TAG, String.format(Locale.US, "holder = %s", holder));
+        pause();
+    }
+
+    // *********************** surface callback end ************************
+
 
     private void bufferingUpdate(IMediaPlayer mp, int percent) {
         onBufferingUpdate(mp, percent);
@@ -234,34 +263,6 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
 
     }
 
-    private final SurfaceHolder.Callback2 mSurfaceCallback = new SurfaceHolder.Callback2() {
-        @Override
-        public void surfaceRedrawNeeded(SurfaceHolder holder) {
-            KLog.d(TAG, String.format(Locale.US, "holder = %s", holder));
-        }
-
-        @Override
-        public void surfaceCreated(SurfaceHolder holder) {
-            KLog.d(TAG, String.format(Locale.US, "holder = %s", holder));
-            if (getMediaPlayer() != null) {
-                getMediaPlayer().setDisplay(holder);
-            }
-        }
-
-        @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-            KLog.d(TAG, String.format(Locale.US, "holder = %s, format = %s, width = %d, height = %d", holder, PixelFormatUtil.formatToString(format), width, height));
-        }
-
-        @Override
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            KLog.d(TAG, String.format(Locale.US, "holder = %s", holder));
-            if (getMediaPlayer() != null) {
-                getMediaPlayer().stop();
-            }
-        }
-    };
-
     private final IjkMediaPlayerComponentListener mPlayerComponentListener = new IjkMediaPlayerComponentListener() {
 
         @Override
@@ -312,4 +313,5 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
             videoSizeChanged(mp, width, height, sar_num, sar_den);
         }
     };
+
 }
