@@ -241,8 +241,8 @@ public class DocumentsFragment extends Fragment {
 
             Intent intent = VideoViewTestActivity.getStartIntent(getContext(), adapter.getDatas(), position);
 
-            // VideoEntry videoEntry = adapter.getItem(position);
-            // Intent intent = IjkMediaPlayerTestActivity.getStartIntent(getContext(), videoEntry);
+             //VideoEntry videoEntry = adapter.getItem(position);
+             //Intent intent = IjkMediaPlayerTestActivity.getStartIntent(getContext(), videoEntry);
             startActivity(intent);
         }
     };

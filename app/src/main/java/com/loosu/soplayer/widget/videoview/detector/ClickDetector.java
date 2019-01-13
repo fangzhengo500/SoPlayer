@@ -35,6 +35,7 @@ public class ClickDetector extends AbsGestureDetector {
     public boolean onDoubleTap(MotionEvent e) {
         KLog.e(TAG, "");
         mController.startOrPausePlayer();
+        mController.updateBtnPlay();
         return true;
     }
 }

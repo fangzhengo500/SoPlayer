@@ -23,7 +23,7 @@ import tv.danmaku.ijk.media.player.IjkTimedText;
 public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, IMediaController {
     private static final String TAG = "AbsSoVideoView";
 
-    private IMediaController.State mState = IMediaController.State.IDLE;
+    private State mState = State.IDLE;
 
     public AbsSoVideoView(@NonNull Context context) {
         super(context);
@@ -56,11 +56,11 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
     protected abstract SurfaceHolder getSurfaceHolder();
 
     @Override
-    public IMediaController.State getState() {
+    public State getState() {
         return mState;
     }
 
-    private void setState(IMediaController.State state) {
+    private void setState(State state) {
         KLog.e(TAG, "state = " + state);
         mState = state;
     }
@@ -73,10 +73,10 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
             player.setDisplay(getSurfaceHolder());
             player.setDataSource(context, uri);
 
-            setState(IMediaController.State.INITIALIZED);
+            setState(State.INITIALIZED);
         } catch (Exception e) {
             e.printStackTrace();
-            setState(IMediaController.State.ERROR);
+            setState(State.ERROR);
         }
     }
 
@@ -89,10 +89,10 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
             player.setDisplay(getSurfaceHolder());
             player.setDataSource(path);
 
-            setState(IMediaController.State.INITIALIZED);
+            setState(State.INITIALIZED);
         } catch (Exception e) {
             e.printStackTrace();
-            setState(IMediaController.State.ERROR);
+            setState(State.ERROR);
         }
     }
 
@@ -105,10 +105,10 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
     public void start() {
         try {
             getMediaPlayer().prepareAsync();
-            setState(IMediaController.State.PREPARING);
+            setState(State.PREPARING);
         } catch (Exception e) {
             e.printStackTrace();
-            setState(IMediaController.State.ERROR);
+            setState(State.ERROR);
         }
     }
 
@@ -116,10 +116,10 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
     public void stop() {
         try {
             getMediaPlayer().stop();
-            setState(IMediaController.State.STOPPED);
+            setState(State.STOPPED);
         } catch (Exception e) {
             e.printStackTrace();
-            setState(IMediaController.State.ERROR);
+            setState(State.ERROR);
         }
     }
 
@@ -127,10 +127,10 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
     public void pause() {
         try {
             getMediaPlayer().pause();
-            setState(IMediaController.State.PAUSED);
+            setState(State.PAUSED);
         } catch (Exception e) {
             e.printStackTrace();
-            setState(IMediaController.State.ERROR);
+            setState(State.ERROR);
         }
     }
 
@@ -138,12 +138,12 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
     public void resume() {
         try {
             getMediaPlayer().start();
-            if (getState() == IMediaController.State.PAUSED) {
-                setState(IMediaController.State.STARTED);
+            if (getState() == State.PAUSED || getState() == State.PLAYBACK_COMPLETED) {
+                setState(State.STARTED);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            setState(IMediaController.State.ERROR);
+            setState(State.ERROR);
         }
     }
 
@@ -151,10 +151,10 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
     public void release() {
         try {
             getMediaPlayer().release();
-            setState(IMediaController.State.END);
+            setState(State.END);
         } catch (Exception e) {
             e.printStackTrace();
-            setState(IMediaController.State.ERROR);
+            setState(State.ERROR);
         }
     }
 
@@ -181,25 +181,25 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
     }
 
     private void completion(IMediaPlayer mp) {
-        setState(IMediaController.State.PLAYBACK_COMPLETED);
+        setState(State.PLAYBACK_COMPLETED);
         onCompletion(mp);
     }
 
     private boolean error(IMediaPlayer mp, int what, int extra) {
-        setState(IMediaController.State.ERROR);
+        setState(State.ERROR);
         return onError(mp);
     }
 
     private boolean info(IMediaPlayer mp, int what, int extra) {
         if (mp.isPlaying() && (what == IMediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START || what == IMediaPlayer.MEDIA_INFO_VIDEO_SEEK_RENDERING_START)) {
-            setState(IMediaController.State.STARTED);
+            setState(State.STARTED);
             onStarted(mp);
         }
         return false;
     }
 
     private void prepared(IMediaPlayer mp) {
-        setState(IMediaController.State.PREPARED);
+        setState(State.PREPARED);
         onPrepared(mp);
     }
 
