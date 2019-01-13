@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -132,18 +131,7 @@ public class SimpleController extends Controller implements IController {
     }
 
     private void onClickBtnPlay() {
-        if (mPlayer.getState() == IMediaController.State.STARTED) {
-            KLog.d(TAG, "暂停 - pause");
-            mPlayer.pause();
-
-        } else if (mPlayer.getState() == IMediaController.State.PAUSED || mPlayer.getState() == IMediaController.State.PLAYBACK_COMPLETED) {
-            KLog.d(TAG, "恢复 - resume");
-            mPlayer.resume();
-
-        } else {
-            mPlayer.start();
-
-        }
+        startOrPausePlayer();
         updateBtnPlay();
     }
 

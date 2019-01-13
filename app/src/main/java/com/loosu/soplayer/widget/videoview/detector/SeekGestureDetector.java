@@ -1,8 +1,9 @@
-package com.loosu.soplayer.widget.videoview.controller;
+package com.loosu.soplayer.widget.videoview.detector;
 
 import android.content.Context;
-import android.media.AudioManager;
 import android.view.MotionEvent;
+
+import com.loosu.soplayer.widget.videoview.controller.GestureController;
 
 
 public class SeekGestureDetector extends AbsGestureDetector {

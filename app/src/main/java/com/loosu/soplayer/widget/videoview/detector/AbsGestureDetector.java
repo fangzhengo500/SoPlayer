@@ -1,4 +1,4 @@
-package com.loosu.soplayer.widget.videoview.controller;
+package com.loosu.soplayer.widget.videoview.detector;
 
 import android.content.Context;
 import android.graphics.RectF;
@@ -7,6 +7,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import com.loosu.soplayer.utils.KLog;
+import com.loosu.soplayer.widget.videoview.controller.GestureController;
 
 
 public abstract class AbsGestureDetector extends GestureController.Detector implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
@@ -58,7 +59,6 @@ public abstract class AbsGestureDetector extends GestureController.Detector impl
 
     @Override
     public boolean onDown(MotionEvent e) {
-        KLog.e(TAG, "e = " + e);
         return true;
     }
 
@@ -73,7 +73,7 @@ public abstract class AbsGestureDetector extends GestureController.Detector impl
     }
 
     @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+    public boolean onScroll(MotionEvent downEvent, MotionEvent event, float distanceX, float distanceY) {
         return true;
     }
 
@@ -83,7 +83,7 @@ public abstract class AbsGestureDetector extends GestureController.Detector impl
     }
 
     @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+    public boolean onFling(MotionEvent downEvent, MotionEvent event, float velocityX, float velocityY) {
         return true;
     }
 }

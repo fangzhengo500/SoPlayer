@@ -1,9 +1,10 @@
-package com.loosu.soplayer.widget.videoview.controller;
+package com.loosu.soplayer.widget.videoview.detector;
 
 import android.content.Context;
 import android.view.MotionEvent;
 
 import com.loosu.soplayer.utils.KLog;
+import com.loosu.soplayer.widget.videoview.controller.GestureController;
 
 
 public class ClickDetector extends AbsGestureDetector {
@@ -33,6 +34,7 @@ public class ClickDetector extends AbsGestureDetector {
     @Override
     public boolean onDoubleTap(MotionEvent e) {
         KLog.e(TAG, "");
+        mController.startOrPausePlayer();
         return true;
     }
 }

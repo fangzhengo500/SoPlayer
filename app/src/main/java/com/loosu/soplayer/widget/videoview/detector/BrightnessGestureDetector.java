@@ -1,12 +1,13 @@
-package com.loosu.soplayer.widget.videoview.controller;
+package com.loosu.soplayer.widget.videoview.detector;
 
 import android.app.Activity;
 import android.content.Context;
-import android.media.AudioManager;
 import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.loosu.soplayer.widget.videoview.controller.GestureController;
 
 
 public class BrightnessGestureDetector extends AbsGestureDetector {

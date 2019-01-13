@@ -51,4 +51,19 @@ public class Controller extends FrameLayout implements IController {
         }
         mShowing = false;
     }
+
+    public void startOrPausePlayer() {
+        if (mPlayer.getState() == IMediaController.State.STARTED) {
+            KLog.d(TAG, "暂停 - pause");
+            mPlayer.pause();
+
+        } else if (mPlayer.getState() == IMediaController.State.PAUSED || mPlayer.getState() == IMediaController.State.PLAYBACK_COMPLETED) {
+            KLog.d(TAG, "恢复 - resume");
+            mPlayer.resume();
+
+        } else {
+            mPlayer.start();
+
+        }
+    }
 }
