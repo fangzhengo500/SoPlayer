@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        class="com.loosu.soplayer.ui.fragment.DocumentsFragment"
+        class="com.loosu.soplayer.ui.fragment.WebBrowserFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

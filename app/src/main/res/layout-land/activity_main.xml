@@ -32,6 +32,12 @@
             android:text="@string/main_media_explorer" />
 
         <TextView
+            android:id="@+id/btn_web_browser"
+            style="@style/MainItemTextStyle"
+            android:drawableLeft="@drawable/ic_action_language"
+            android:text="@string/main_media_explorer" />
+
+        <TextView
             android:id="@+id/btn_settings"
             style="@style/MainItemTextStyle"
             android:drawableLeft="@drawable/ic_action_settings"

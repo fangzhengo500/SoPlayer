@@ -28,7 +28,10 @@
         <activity android:name=".ui.activity.VideoPlayerActivity" />
         <activity
             android:name="com.loosu.test.ijk.IjkMediaPlayerTestActivity"
+            android:configChanges="screenSize|orientation"
             android:theme="@style/Theme.AppCompat" />
-        <activity android:name="com.loosu.test.videoview.VideoViewTestActivity" />
+        <activity
+            android:name="com.loosu.test.videoview.VideoViewTestActivity"
+            android:configChanges="screenSize|orientation" />
     </application>
 </manifest>

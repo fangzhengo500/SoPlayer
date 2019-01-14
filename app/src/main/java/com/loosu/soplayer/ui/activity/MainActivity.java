@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private View mBtnMediaExplorer;
+    private View mBtnBrowser;
     private View mBtnSettings;
 
     @Override
@@ -28,11 +29,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void findView(Bundle savedInstanceState) {
         mBtnMediaExplorer = findViewById(R.id.btn_media_explorer);
+        mBtnBrowser = findViewById(R.id.btn_web_browser);
         mBtnSettings = findViewById(R.id.btn_settings);
     }
 
     private void initListener(Bundle savedInstanceState) {
         mBtnMediaExplorer.setOnClickListener(mOnClickListener);
+        mBtnBrowser.setOnClickListener(mOnClickListener);
         mBtnSettings.setOnClickListener(mOnClickListener);
     }
 
@@ -41,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
             return;
         }
+        Intent intent = new Intent(this, MediaExplorerActivity.class);
+        startActivity(intent);
+    }
+
+    private void onClickWebBrowser() {
         Intent intent = new Intent(this, MediaExplorerActivity.class);
         startActivity(intent);
     }
@@ -57,11 +65,15 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.btn_media_explorer:
                     onClickBtnMediaExplorer();
                     break;
+                case R.id.btn_web_browser:
+                    onClickWebBrowser();
+                    break;
                 case R.id.btn_settings:
                     onClickBtnSettings();
                     break;
             }
         }
     };
+
 
 }
