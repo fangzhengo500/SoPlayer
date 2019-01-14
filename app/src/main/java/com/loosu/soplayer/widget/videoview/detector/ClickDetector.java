@@ -5,6 +5,7 @@ import android.view.MotionEvent;
 
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
+import com.loosu.soplayer.widget.videoview.interfaces.IController;
 
 
 public class ClickDetector extends AbsGestureDetector {
@@ -26,7 +27,7 @@ public class ClickDetector extends AbsGestureDetector {
         if (mController.isShowing()) {
             mController.hide();
         } else {
-            mController.show();
+            mController.show(IController.SHOW_AUTO_HIDE_DEFAULT);
         }
         return true;
     }

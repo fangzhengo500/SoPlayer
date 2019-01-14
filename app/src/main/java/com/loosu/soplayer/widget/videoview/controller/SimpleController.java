@@ -61,7 +61,7 @@ public class SimpleController extends Controller implements IController {
     }
 
     @Override
-    public void show() {
+    public void show(long duration) {
         if (mShowing) {
             return;
         }

@@ -1,5 +1,10 @@
 package com.loosu.soplayer.widget.videoview;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -48,8 +53,6 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
 
     public SoVideoView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        KLog.w(TAG, "");
-        init(context, attrs, defStyleAttr);
         LayoutInflater.from(context).inflate(getLayoutId(), this, true);
         mSurfaceView = findViewById(R.id.surface_view);
         mIvCover = findViewById(R.id.iv_cover);
@@ -62,9 +65,6 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         setOnClickListener(this);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-    }
-
     protected int getLayoutId() {
         return R.layout.widget_base_so_player;
     }
@@ -73,6 +73,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     public void setDataSource(Context context, Uri uri) {
         super.setDataSource(context, uri);
 
+        mController.show(IController.SHOW_AND_NEVER_HIDE);
         showCover();
         Glide.with(this)
                 .load(uri)
@@ -83,6 +84,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     public void setDataSource(String path) {
         super.setDataSource(path);
 
+        mController.show(IController.SHOW_AND_NEVER_HIDE);
         showCover();
         Glide.with(this)
                 .load(path)
@@ -110,7 +112,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     protected void onPrepared(IMediaPlayer mp) {
         super.onPrepared(mp);
         if (mController != null) {
-            mController.show();
+            mController.show(IController.SHOW_AUTO_HIDE_DEFAULT);
         }
     }
 
@@ -165,7 +167,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         if (mController.isShowing()) {
             mController.hide();
         } else {
-            mController.show();
+            mController.show(IController.SHOW_AUTO_HIDE_DEFAULT);
         }
     }
 
@@ -206,7 +208,14 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     }
 
     private void showVideo() {
-        mIvCover.setVisibility(GONE);
         mSurfaceView.setVisibility(VISIBLE);
+        ValueAnimator animator = ObjectAnimator.ofPropertyValuesHolder(PropertyValuesHolder.ofFloat(View.ALPHA, 0));
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mIvCover.setVisibility(GONE);
+            }
+        });
+        animator.start();
     }
 }

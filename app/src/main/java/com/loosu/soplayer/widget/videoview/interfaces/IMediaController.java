@@ -1,6 +1,8 @@
 package com.loosu.soplayer.widget.videoview.interfaces;
 
 public interface IMediaController {
+    public String getDataSource();
+
     public long getDuration();
 
     public long getCurrentPosition();

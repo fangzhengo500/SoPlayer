@@ -31,7 +31,7 @@ public class Controller extends FrameLayout implements IController {
     }
 
     @Override
-    public void show() {
+    public void show(long duration) {
         mShowing = true;
     }
 

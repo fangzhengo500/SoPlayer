@@ -15,6 +15,7 @@ import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.TimeUtil;
 import com.loosu.soplayer.widget.SoProgressBar;
 import com.loosu.soplayer.widget.videoview.controller.Controller;
+import com.loosu.soplayer.widget.videoview.interfaces.IController;
 import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 
 import java.util.Locale;
@@ -81,16 +82,22 @@ public abstract class AbsGestureController extends Controller {
     }
 
     @Override
-    public void show() {
-        super.show();
+    public void show(long duration) {
+        super.show(duration);
+        setTitle(mPlayer.getDataSource());
         showBtnPauseOrResume();
+        updateProgress();
         showLayoutTop();
         showLayoutBottom();
 
-        // 自动隐藏
-        KLog.w(TAG, "2s 后自动隐藏.");
-        removeCallbacks(mHideRunnable);
-        postDelayed(mHideRunnable, 2000);
+        if (duration > 0) {
+            // 自动隐藏
+            removeCallbacks(mHideRunnable);
+            postDelayed(mHideRunnable, IController.SHOW_AUTO_HIDE_DEFAULT);
+        } else {
+            removeCallbacks(mHideRunnable);
+        }
+
         mProgressUpdateRunnable.run();
     }
 
@@ -156,10 +163,14 @@ public abstract class AbsGestureController extends Controller {
         mTvSeekDuration.setText(TimeUtil.formatDuration(duration));
         mProgressBarSeek.setProgress((int) (present * mProgressBarSeek.getMax()));
         mLayoutSeek.setVisibility(VISIBLE);
+
+        mBottomSeekBar.setProgress((int) (present * mProgressBarSeek.getMax()));
+        removeCallbacks(mProgressUpdateRunnable);
     }
 
     public void hideSeekChange() {
         mLayoutSeek.setVisibility(GONE);
+        postDelayed(mProgressUpdateRunnable, 1000);
     }
 
     public long getDuration() {
@@ -173,7 +184,7 @@ public abstract class AbsGestureController extends Controller {
     private void onClickBtnPlay() {
         startOrPausePlayer();
         updateBtnPlay();
-        show();
+        show(IController.SHOW_AUTO_HIDE_DEFAULT);
     }
 
     private final OnClickListener mClickListener = new OnClickListener() {
@@ -193,9 +204,6 @@ public abstract class AbsGestureController extends Controller {
 
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (!fromUser) {
-                return;
-            }
         }
 
         @Override
@@ -269,7 +277,7 @@ public abstract class AbsGestureController extends Controller {
     }
 
     public void seekTo(int newPosition) {
-        if (mPlayer!=null) {
+        if (mPlayer != null) {
             mPlayer.seeKTo(newPosition);
         }
     }
@@ -286,7 +294,9 @@ public abstract class AbsGestureController extends Controller {
         public void run() {
             updateProgress();
             removeCallbacks(mProgressUpdateRunnable);
-            postDelayed(mProgressUpdateRunnable, 1000);
+            if (mPlayer != null && mPlayer.isPlaying()) {
+                postDelayed(mProgressUpdateRunnable, 1000);
+            }
         }
     };
 
