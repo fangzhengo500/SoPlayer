@@ -67,6 +67,14 @@
                 android:text="00:00"
                 android:textColor="@color/text_color_white"
                 android:textSize="@dimen/text_size_small" />
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:clickable="true"
+                android:padding="5dp"
+                android:src="@drawable/btn_fullscreen_drawable" />
         </LinearLayout>
     </FrameLayout>
 
@@ -74,8 +82,8 @@
         android:id="@+id/progress_screen_brightness"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="20dp"
         android:visibility="gone"
         app:so_progress_bar_icon="@drawable/ic_action_srceen_brightness"
         tools:visibility="visible" />
@@ -84,8 +92,8 @@
         android:id="@+id/progress_volume"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="20dp"
         android:visibility="gone"
         app:so_progress_bar_icon="@drawable/ic_action_volume_up"
         tools:visibility="visible" />
