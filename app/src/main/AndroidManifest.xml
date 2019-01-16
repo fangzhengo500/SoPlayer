@@ -23,7 +23,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.MediaExplorerActivity" />
+        <activity
+            android:name=".ui.activity.MediaExplorerActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".ui.activity.SettingActivity" />
         <activity android:name=".ui.activity.VideoPlayerActivity" />
         <activity

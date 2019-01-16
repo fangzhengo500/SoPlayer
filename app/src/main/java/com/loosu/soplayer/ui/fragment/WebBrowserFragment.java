@@ -8,20 +8,24 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.loosu.soplayer.R;
+import com.loosu.soplayer.adapter.WebVideoAdapter;
+import com.loosu.soplayer.business.VideoWebViewClient;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.SystemUiUtil;
+import com.loosu.soplayer.widget.dialog.ListBottomSheetDialog;
 
 public class WebBrowserFragment extends Fragment {
     private static final String TAG = "WebBrowserFragment";
@@ -30,7 +34,14 @@ public class WebBrowserFragment extends Fragment {
     private EditText mEtInput;
     private View mBtnToolbarClear;
 
+    private View mLoadingView;
+
     private WebView mWebView;
+
+    private View mLayoutBottom;
+    private View mBtnNavigateBefore;
+    private View mBtnNavigateNext;
+    private View mBtnNavigatePlay;
 
 
     @Override
@@ -58,29 +69,56 @@ public class WebBrowserFragment extends Fragment {
         mEtInput = view.findViewById(R.id.et_input);
         mBtnToolbarClear = view.findViewById(R.id.btn_toolbar_clear);
 
+        mLoadingView = view.findViewById(R.id.loading_view);
+
         mWebView = view.findViewById(R.id.web_view);
+
+        mLayoutBottom = view.findViewById(R.id.layout_bottom);
+        mBtnNavigateBefore = view.findViewById(R.id.btn_navigate_before);
+        mBtnNavigateNext = view.findViewById(R.id.btn_navigate_next);
+        mBtnNavigatePlay = view.findViewById(R.id.btn_navigate_play);
     }
 
     private void initView(View view, Bundle savedInstanceState) {
         final Context context = getContext();
 
         // toolbar
-        mToolbar.setPadding(mToolbar.getPaddingLeft(),
+        mToolbar.setPadding(
+                mToolbar.getPaddingLeft(),
                 mToolbar.getPaddingTop() + SystemUiUtil.getStatusBarHeight(context),
                 mToolbar.getPaddingRight(),
                 mToolbar.getPaddingBottom());
-        mBtnToolbarClear.setOnClickListener(mOnClickListener);
 
-       mWebView.setWebViewClient(mWebViewClient);
+        mWebView.setWebViewClient(mWebViewClient);
+        WebSettings settings = mWebView.getSettings();
+        settings.setJavaScriptEnabled(true);
     }
 
     private void initListener(View view, Bundle savedInstanceState) {
-
         mEtInput.setOnEditorActionListener(mEditorActionListener);
+        mBtnToolbarClear.setOnClickListener(mOnClickListener);
+        mBtnNavigateBefore.setOnClickListener(mOnClickListener);
+        mBtnNavigateNext.setOnClickListener(mOnClickListener);
+        mBtnNavigatePlay.setOnClickListener(mOnClickListener);
     }
 
     private void onClickBtnToolbarClear(View v) {
         mEtInput.setText(null);
+    }
+
+    private void onClickBtnNavigateBefore(View v) {
+        mWebView.goBack();
+    }
+
+    private void onClickBtnNavigateNext(View v) {
+        mWebView.goForward();
+    }
+
+    private void onClickBtnNavigatePlay(View v) {
+
+        ListBottomSheetDialog dialog = new ListBottomSheetDialog(getContext());
+        dialog.setAdapter(new WebVideoAdapter(mWebViewClient.getVideoUrls()));
+        dialog.show();
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -90,8 +128,19 @@ public class WebBrowserFragment extends Fragment {
                 case R.id.btn_toolbar_clear:
                     onClickBtnToolbarClear(v);
                     break;
+                case R.id.btn_navigate_before:
+                    onClickBtnNavigateBefore(v);
+                    break;
+                case R.id.btn_navigate_next:
+                    onClickBtnNavigateNext(v);
+                    break;
+                case R.id.btn_navigate_play:
+                    onClickBtnNavigatePlay(v);
+                    break;
             }
         }
+
+
     };
 
     private TextView.OnEditorActionListener mEditorActionListener = new TextView.OnEditorActionListener() {
@@ -123,29 +172,25 @@ public class WebBrowserFragment extends Fragment {
         }
     }
 
-    private WebViewClient mWebViewClient = new WebViewClient() {
-
+    private VideoWebViewClient mWebViewClient = new VideoWebViewClient() {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
             KLog.d(TAG, "view = " + view + ", url = " + url);
+            mLoadingView.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             KLog.d(TAG, "view = " + view + ", url = " + url);
+            mLoadingView.setVisibility(View.GONE);
         }
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-            KLog.d(TAG, "request = " + request);
-            KLog.d(TAG, "url = " + request.getUrl());
-            KLog.d(TAG, "headers = " + request.getRequestHeaders());
-            view.loadUrl(request.getUrl().toString());
+            view.loadUrl(request.getUrl().toString(), request.getRequestHeaders());
             return true;
         }
     };
-
-
 }
