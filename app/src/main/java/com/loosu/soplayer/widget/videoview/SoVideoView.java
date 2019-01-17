@@ -21,8 +21,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
+import com.loosu.soplayer.widget.videoview.controller.Controller;
 import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
-import com.loosu.soplayer.widget.videoview.interfaces.IController;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -42,7 +42,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     private int mVideoWidth = Integer.MIN_VALUE;
     private int mVideoHeight = Integer.MIN_VALUE;
 
-    private IController mController;
+    private Controller mController;
 
     private float mDownX;
     private float mDownY;
@@ -64,7 +64,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         mTvTcp = findViewById(R.id.tv_tcp);
 
         GestureController controller = new GestureController(context);
-        controller.setMediaPlayer(this);
+        controller.attachMediaPlayer(this);
         mController = controller;
 
         addView(controller);
@@ -79,7 +79,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     public void setDataSource(Context context, Uri uri) {
         super.setDataSource(context, uri);
 
-        mController.show(IController.SHOW_AND_NEVER_HIDE);
+        mController.show(Controller.SHOW_AND_NEVER_HIDE);
         showCover();
         Glide.with(this)
                 .load(uri)
@@ -90,11 +90,23 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     public void setDataSource(String path) {
         super.setDataSource(path);
 
-        mController.show(IController.SHOW_AND_NEVER_HIDE);
+        mController.show(Controller.SHOW_AND_NEVER_HIDE);
         showCover();
         Glide.with(this)
                 .load(path)
                 .into(mIvCover);
+    }
+
+    public void setController(Controller controller) {
+        KLog.w(TAG, "luwei  controller = " + controller);
+        if (mController != null) {
+            mController.hide();
+            removeView(mController);
+        }
+
+        mController = controller;
+        mController.attachMediaPlayer(this);
+        addView(controller);
     }
 
     @Override
@@ -118,7 +130,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     protected void onPrepared(IMediaPlayer mp) {
         super.onPrepared(mp);
         if (mController != null) {
-            mController.show(IController.SHOW_AUTO_HIDE_DEFAULT);
+            mController.show(Controller.SHOW_AUTO_HIDE_DEFAULT);
         }
     }
 
@@ -190,7 +202,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         if (mController.isShowing()) {
             mController.hide();
         } else {
-            mController.show(IController.SHOW_AUTO_HIDE_DEFAULT);
+            mController.show(Controller.SHOW_AUTO_HIDE_DEFAULT);
         }
     }
 

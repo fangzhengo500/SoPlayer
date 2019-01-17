@@ -50,7 +50,7 @@ public class SimpleController extends Controller implements IController {
         updateBtnPlay();
     }
 
-    public void setMediaPlayer(IMediaController player) {
+    public void attachMediaPlayer(IMediaController player) {
         mPlayer = player;
         updateBtnPlay();
     }

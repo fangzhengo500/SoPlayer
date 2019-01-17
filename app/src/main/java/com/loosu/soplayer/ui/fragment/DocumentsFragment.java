@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.adapter.DocumentVideoAdapter;
+import com.loosu.soplayer.adapter.PreViewVideoAdapter;
 import com.loosu.soplayer.adapter.VideoCardAdapter;
 import com.loosu.soplayer.adapter.VideoSimpleAdapter;
 import com.loosu.soplayer.adapter.base.recyclerview.IRecyclerItemClickListener;
@@ -60,21 +61,42 @@ public class DocumentsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        KLog.w(TAG, "");
         init(savedInstanceState);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        KLog.w(TAG, "");
         return inflater.inflate(R.layout.fragment_documents, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        KLog.w(TAG, "");
         findView(view, savedInstanceState);
         initView(view, savedInstanceState);
         initListener(view, savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        KLog.w(TAG, "");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        KLog.w(TAG, "");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        KLog.w(TAG, "");
     }
 
     private void init(Bundle savedInstanceState) {
@@ -82,7 +104,7 @@ public class DocumentsFragment extends Fragment {
 
         mVideoEntries = DataHelper.getVideos(context);
 
-        mAdapters.put(VIEW_MODULE_DEFAULT, new VideoSimpleAdapter(null));
+        mAdapters.put(VIEW_MODULE_DEFAULT, new PreViewVideoAdapter(null));
         mAdapters.put(VIEW_MODULE_CARD, new VideoCardAdapter(null));
 
         mLayoutManager = new GridLayoutManager(context, 1);
@@ -115,6 +137,7 @@ public class DocumentsFragment extends Fragment {
         mToolbar.setPositionBackgroundResource(R.drawable.toolbar_position_background);
         // viewList
         mViewList.setLayoutManager(mLayoutManager);
+
         setViewModule(VIEW_MODULE_DEFAULT);
     }
 
@@ -198,9 +221,6 @@ public class DocumentsFragment extends Fragment {
      *                 {@link #VIEW_MODULE_CARD}     卡片风格
      */
     private void setViewModule(int itemMode) {
-        if (mViewModule == itemMode) {
-            return;
-        }
         mViewModule = itemMode;
 
         int position = mLayoutManager.findFirstVisibleItemPosition();
@@ -241,8 +261,8 @@ public class DocumentsFragment extends Fragment {
 
             Intent intent = VideoViewTestActivity.getStartIntent(getContext(), adapter.getDatas(), position);
 
-             //VideoEntry videoEntry = adapter.getItem(position);
-             //Intent intent = IjkMediaPlayerTestActivity.getStartIntent(getContext(), videoEntry);
+            //VideoEntry videoEntry = adapter.getItem(position);
+            //Intent intent = IjkMediaPlayerTestActivity.getStartIntent(getContext(), videoEntry);
             startActivity(intent);
         }
     };

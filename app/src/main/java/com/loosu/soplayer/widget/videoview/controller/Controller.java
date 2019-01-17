@@ -21,8 +21,15 @@ public class Controller extends FrameLayout implements IController {
         super(context);
     }
 
-    public void setMediaPlayer(IMediaController player) {
+    @Override
+    public void attachMediaPlayer(IMediaController player) {
+        KLog.e(TAG, "luwei player = " + player);
         mPlayer = player;
+    }
+
+    @Override
+    public void detachedMediaPLayer() {
+        mPlayer = null;
     }
 
     @Override
