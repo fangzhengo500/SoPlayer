@@ -1,14 +1,15 @@
 package com.loosu.soplayer.ui.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +23,9 @@ import android.widget.TextView;
 
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.adapter.WebVideoAdapter;
+import com.loosu.soplayer.adapter.base.recyclerview.IRecyclerItemClickListener;
 import com.loosu.soplayer.business.VideoWebViewClient;
+import com.loosu.soplayer.ui.activity.PlayerActivity;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.SystemUiUtil;
 import com.loosu.soplayer.widget.dialog.ListBottomSheetDialog;
@@ -42,6 +45,7 @@ public class WebBrowserFragment extends Fragment {
     private View mBtnNavigateBefore;
     private View mBtnNavigateNext;
     private View mBtnNavigatePlay;
+    private WebVideoAdapter mWebVideoAdapter;
 
 
     @Override
@@ -58,9 +62,15 @@ public class WebBrowserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        init(view, savedInstanceState);
         findView(view, savedInstanceState);
         initView(view, savedInstanceState);
         initListener(view, savedInstanceState);
+    }
+
+    private void init(View view, Bundle savedInstanceState) {
+        mWebVideoAdapter = new WebVideoAdapter(null);
+        mWebVideoAdapter.setItemClickListener(mItemClickListener);
     }
 
     private void findView(View view, Bundle savedInstanceState) {
@@ -115,10 +125,27 @@ public class WebBrowserFragment extends Fragment {
     }
 
     private void onClickBtnNavigatePlay(View v) {
+        mWebVideoAdapter.setDatas(mWebViewClient.getVideoUrls());
 
         ListBottomSheetDialog dialog = new ListBottomSheetDialog(getContext());
-        dialog.setAdapter(new WebVideoAdapter(mWebViewClient.getVideoUrls()));
+        dialog.setAdapter(mWebVideoAdapter);
         dialog.show();
+    }
+
+    private void onEditorActionGo(TextView v) {
+        String inputStr = v.getText().toString();
+        if (TextUtils.isEmpty(inputStr)) {
+            return;
+        }
+
+        Uri uri = Uri.parse(inputStr);
+        String scheme = uri.getScheme();
+
+        if (TextUtils.isEmpty(scheme)) {
+            mWebView.loadUrl("https://" + inputStr);
+        } else {
+            mWebView.loadUrl(inputStr);
+        }
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -155,22 +182,15 @@ public class WebBrowserFragment extends Fragment {
             return false;
         }
     };
-
-    private void onEditorActionGo(TextView v) {
-        String inputStr = v.getText().toString();
-        if (TextUtils.isEmpty(inputStr)) {
-            return;
+    private IRecyclerItemClickListener mItemClickListener = new IRecyclerItemClickListener() {
+        @Override
+        public void onItemClick(RecyclerView parent, int position, RecyclerView.ViewHolder holder, View view) {
+            String url = "http://ivytest.i-weiying.com/4224/video/20190111/20190111decccd02a358c50c1c3adbe83b0cce84154717339171.mov?auth_key=1547709043-0-0-2fcdcbc891f2bf6c06f8866773979c99";
+            //url = mWebVideoAdapter.getItem(position);
+            Intent intent = PlayerActivity.getStartIntent(getContext(), url);
+            startActivity(intent);
         }
-
-        Uri uri = Uri.parse(inputStr);
-        String scheme = uri.getScheme();
-
-        if (TextUtils.isEmpty(scheme)) {
-            mWebView.loadUrl("https://" + inputStr);
-        } else {
-            mWebView.loadUrl(inputStr);
-        }
-    }
+    };
 
     private VideoWebViewClient mWebViewClient = new VideoWebViewClient() {
         @Override

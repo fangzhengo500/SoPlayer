@@ -8,6 +8,7 @@ import com.loosu.soplayer.widget.videoview.detector.BrightnessGestureDetector;
 import com.loosu.soplayer.widget.videoview.detector.ClickDetector;
 import com.loosu.soplayer.widget.videoview.detector.SeekGestureDetector;
 import com.loosu.soplayer.widget.videoview.detector.VolumeGestureDetector;
+import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,5 +90,20 @@ public class GestureController extends AnimationGestureController {
             }
         }
         return mHandingDetector;
+    }
+
+    @Override
+    protected void onClickBtnPlay() {
+        super.onClickBtnPlay();
+        if (mPlayer == null) {
+            return;
+        }
+        boolean isStartPlay = mPlayer.getState() == IMediaController.State.STARTED ||
+                mPlayer.getState() == IMediaController.State.PREPARING ||
+                mPlayer.getState() == IMediaController.State.PREPARED;
+
+        if (isStartPlay) {
+            hide();
+        }
     }
 }

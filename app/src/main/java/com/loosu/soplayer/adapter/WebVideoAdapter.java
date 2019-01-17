@@ -34,4 +34,10 @@ public class WebVideoAdapter extends ARecyclerAdapter<String> {
     public String getItem(int position) {
         return mDatas.get(position);
     }
+
+    @Override
+    public void setDatas(List<String> datas) {
+        super.setDatas(datas);
+        notifyDataSetChanged();
+    }
 }

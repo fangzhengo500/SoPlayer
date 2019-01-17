@@ -181,13 +181,13 @@ public abstract class AbsGestureController extends Controller {
         return mPlayer == null ? 0 : mPlayer.getCurrentPosition();
     }
 
-    private void onClickBtnPlay() {
+    protected void onClickBtnPlay() {
         startOrPausePlayer();
         updateBtnPlay();
         show(IController.SHOW_AUTO_HIDE_DEFAULT);
     }
 
-    private final OnClickListener mClickListener = new OnClickListener() {
+    protected final OnClickListener mClickListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {

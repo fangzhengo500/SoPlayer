@@ -9,12 +9,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.format.Formatter;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.loosu.soplayer.R;
@@ -34,6 +36,8 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
 
     private AutoFixSurfaceView mSurfaceView;
     private ImageView mIvCover;
+    private View mLoadingView;
+    private TextView mTvTcp;
 
     private int mVideoWidth = Integer.MIN_VALUE;
     private int mVideoHeight = Integer.MIN_VALUE;
@@ -56,6 +60,8 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         LayoutInflater.from(context).inflate(getLayoutId(), this, true);
         mSurfaceView = findViewById(R.id.surface_view);
         mIvCover = findViewById(R.id.iv_cover);
+        mLoadingView = findViewById(R.id.loading_view);
+        mTvTcp = findViewById(R.id.tv_tcp);
 
         GestureController controller = new GestureController(context);
         controller.setMediaPlayer(this);
@@ -134,7 +140,24 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
 
     @Override
     protected void onBufferingUpdate(IMediaPlayer mp, int percent) {
-        mBufferPercentage = percent;
+        mBufferPercentage = percent * 1f / 100;
+    }
+
+    @Override
+    protected void onInfo(IMediaPlayer mp, int what) {
+        switch (what) {
+            case IMediaPlayer.MEDIA_INFO_BUFFERING_START:
+                KLog.w(TAG, "11111 loading show");
+                mLoadingView.setVisibility(VISIBLE);
+                post(mUpdateTcpRunnable);
+                break;
+
+            case IMediaPlayer.MEDIA_INFO_BUFFERING_END:
+                KLog.w(TAG, "22222 loading hide");
+                mLoadingView.setVisibility(GONE);
+                removeCallbacks(mUpdateTcpRunnable);
+                break;
+        }
     }
 
     @Override
@@ -218,4 +241,15 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         });
         animator.start();
     }
+
+
+    private Runnable mUpdateTcpRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mTvTcp.setText(Formatter.formatFileSize(getContext(), mPlayer.getTcpSpeed()) + "/s");
+
+            removeCallbacks(mUpdateTcpRunnable);
+            postDelayed(mUpdateTcpRunnable, 500);
+        }
+    };
 }
