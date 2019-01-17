@@ -61,4 +61,8 @@ public class Controller extends FrameLayout implements IController {
 
         }
     }
+
+    public void seekTo(int position) {
+        mPlayer.seeKTo(position);
+    }
 }

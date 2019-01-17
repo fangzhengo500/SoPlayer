@@ -186,7 +186,7 @@ public class WebBrowserFragment extends Fragment {
         @Override
         public void onItemClick(RecyclerView parent, int position, RecyclerView.ViewHolder holder, View view) {
             String url = "http://ivytest.i-weiying.com/4224/video/20190111/20190111decccd02a358c50c1c3adbe83b0cce84154717339171.mov?auth_key=1547709043-0-0-2fcdcbc891f2bf6c06f8866773979c99";
-            //url = mWebVideoAdapter.getItem(position);
+            url = mWebVideoAdapter.getItem(position);
             Intent intent = PlayerActivity.getStartIntent(getContext(), url);
             startActivity(intent);
         }

@@ -18,9 +18,6 @@ import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 public class SimpleController extends Controller implements IController {
     private static final String TAG = "AbsSoVideoView";
 
-    protected IMediaController mPlayer;
-    private boolean mShowing = true;
-
     private ImageView mBtnPauseOrResume;
 
     private TextView mTvCurrentPosition;
@@ -50,8 +47,9 @@ public class SimpleController extends Controller implements IController {
         updateBtnPlay();
     }
 
+    @Override
     public void attachMediaPlayer(IMediaController player) {
-        mPlayer = player;
+        super.attachMediaPlayer(player);
         updateBtnPlay();
     }
 

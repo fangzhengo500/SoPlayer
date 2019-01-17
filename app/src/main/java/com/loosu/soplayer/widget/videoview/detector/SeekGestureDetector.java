@@ -3,6 +3,7 @@ package com.loosu.soplayer.widget.videoview.detector;
 import android.content.Context;
 import android.view.MotionEvent;
 
+import com.loosu.soplayer.widget.videoview.controller.gesture.AbsGestureController2;
 import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
 
 
@@ -11,7 +12,7 @@ public class SeekGestureDetector extends AbsGestureDetector {
     private long mSeek;
     private long mTargetSeek = -1;
 
-    public SeekGestureDetector(Context context, GestureController controller) {
+    public SeekGestureDetector(Context context, AbsGestureController2 controller) {
         super(context, controller);
     }
 

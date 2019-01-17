@@ -24,5 +24,6 @@ public class PlayerActivity extends BaseActivity {
         setContentView(R.layout.activity_player);
         SoVideoView videoView = findViewById(R.id.video_view);
         videoView.setDataSource(getIntent().getStringExtra(KEY_PATH));
+        //videoView.setController(new SimpleController(this));
     }
 }

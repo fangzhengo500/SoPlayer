@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.widget.videoview.controller.Controller;
+import com.loosu.soplayer.widget.videoview.controller.gesture.AnimationGestureController2;
 import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
 
 import tv.danmaku.ijk.media.player.IMediaPlayer;
@@ -63,7 +64,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
         mLoadingView = findViewById(R.id.loading_view);
         mTvTcp = findViewById(R.id.tv_tcp);
 
-        GestureController controller = new GestureController(context);
+        AnimationGestureController2 controller = new AnimationGestureController2(context);
         controller.attachMediaPlayer(this);
         mController = controller;
 

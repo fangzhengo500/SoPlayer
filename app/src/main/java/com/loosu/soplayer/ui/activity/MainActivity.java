@@ -44,12 +44,12 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
             return;
         }
-        Intent intent = new Intent(this, MediaExplorerActivity.class);
+        Intent intent = MediaExplorerActivity.getStartIntent(this, MediaExplorerActivity.PAGE_DOCUMENT);
         startActivity(intent);
     }
 
     private void onClickWebBrowser() {
-        Intent intent = new Intent(this, MediaExplorerActivity.class);
+        Intent intent = MediaExplorerActivity.getStartIntent(this, MediaExplorerActivity.PAGE_BROWSER);
         startActivity(intent);
     }
 

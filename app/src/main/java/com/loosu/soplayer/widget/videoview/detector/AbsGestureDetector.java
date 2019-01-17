@@ -5,10 +5,12 @@ import android.graphics.RectF;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
+import com.loosu.soplayer.widget.videoview.controller.gesture.AbsGestureController2;
 import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
+import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController2;
 
 
-public abstract class AbsGestureDetector extends GestureController.Detector implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+public abstract class AbsGestureDetector extends AbsGestureController2.Detector implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
     private static final String TAG = "AbsGestureDetector";
 
     protected final Context mContext;
@@ -18,7 +20,7 @@ public abstract class AbsGestureDetector extends GestureController.Detector impl
     protected final RectF mControlRect = new RectF();
     private final GestureDetector mDetector;
 
-    public AbsGestureDetector(Context context, GestureController controller) {
+    public AbsGestureDetector(Context context, AbsGestureController2 controller) {
         super(controller);
         mContext = context;
         mDetector = new GestureDetector(context, this);
