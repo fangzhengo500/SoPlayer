@@ -284,12 +284,6 @@ public class GestureController extends AbsGestureController {
         mTvTitle.setText(text);
     }
 
-    public void seekTo(int newPosition) {
-        if (mPlayer != null) {
-            mPlayer.seeKTo(newPosition);
-        }
-    }
-
     private Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
