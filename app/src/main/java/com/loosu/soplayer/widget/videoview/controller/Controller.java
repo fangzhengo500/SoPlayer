@@ -9,7 +9,7 @@ import com.loosu.soplayer.widget.videoview.interfaces.IController;
 import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 
 
-public class Controller extends FrameLayout implements IController {
+public abstract class Controller extends FrameLayout implements IController {
     private static final String TAG = "AbsSoVideoView";
 
 

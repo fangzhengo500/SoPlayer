@@ -9,7 +9,7 @@ import com.loosu.soplayer.widget.videoview.controller.Controller;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbsGestureController extends Controller {
+public abstract class AbsGestureController extends Controller {
 
 
     private Detector mHandingDetector = null;
@@ -86,6 +86,8 @@ public class AbsGestureController extends Controller {
         }
         return mHandingDetector;
     }
+
+    public abstract void updateBtnPlay();
 
     public abstract static class Detector<T extends AbsGestureController> {
         protected final T mController;

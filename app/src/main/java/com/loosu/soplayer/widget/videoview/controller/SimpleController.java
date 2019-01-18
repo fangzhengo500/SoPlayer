@@ -11,11 +11,12 @@ import android.widget.TextView;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.TimeUtil;
+import com.loosu.soplayer.widget.videoview.controller.gesture.AbsGestureController;
 import com.loosu.soplayer.widget.videoview.interfaces.IController;
 import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
 
 
-public class SimpleController extends Controller implements IController {
+public class SimpleController extends AbsGestureController implements IController {
     private static final String TAG = "AbsSoVideoView";
 
     private ImageView mBtnPauseOrResume;

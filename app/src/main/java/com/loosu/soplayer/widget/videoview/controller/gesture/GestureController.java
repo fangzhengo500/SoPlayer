@@ -228,6 +228,7 @@ public class GestureController extends AbsGestureController {
         }
     };
 
+    @Override
     public void updateBtnPlay() {
         if (mBtnPauseOrResume == null)
             return;

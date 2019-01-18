@@ -8,7 +8,7 @@ import com.loosu.soplayer.adapter.base.recyclerview.RecyclerHolder;
 import com.loosu.soplayer.domain.VideoEntry;
 import com.loosu.soplayer.widget.videoview.AbsSoVideoView;
 import com.loosu.soplayer.widget.videoview.SoVideoView;
-import com.loosu.soplayer.widget.videoview.controller.SimpleController;
+import com.loosu.soplayer.widget.videoview.controller.ListSimpleController;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class PreViewVideoAdapter extends DocumentVideoAdapter {
     public RecyclerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerHolder holder = super.onCreateViewHolder(parent, viewType);
         SoVideoView videoView = holder.getView(R.id.video_view);
-        videoView.setController(new SimpleController(parent.getContext()));
+        videoView.setController(new ListSimpleController(parent.getContext()));
         return holder;
     }
 
