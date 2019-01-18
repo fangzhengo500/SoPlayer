@@ -4,15 +4,14 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.view.MotionEvent;
 
-import com.loosu.soplayer.widget.videoview.controller.gesture.AbsGestureController2;
 import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
 
 
-public class VolumeGestureDetector extends AbsGestureDetector {
+public class VolumeGestureDetector extends AbsGestureDetector<GestureController> {
 
     private int mVolume;
 
-    public VolumeGestureDetector(Context context, AbsGestureController2 controller) {
+    public VolumeGestureDetector(Context context, GestureController controller) {
         super(context, controller);
     }
 

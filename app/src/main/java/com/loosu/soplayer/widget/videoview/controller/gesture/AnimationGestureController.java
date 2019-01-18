@@ -8,7 +8,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
 
-public abstract class AnimationGestureController extends AbsGestureController {
+public  class AnimationGestureController extends GestureController {
 
     private static final long ANIMATION_DURATION = 500;
 

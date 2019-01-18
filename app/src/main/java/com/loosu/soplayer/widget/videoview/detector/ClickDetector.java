@@ -4,15 +4,14 @@ import android.content.Context;
 import android.view.MotionEvent;
 
 import com.loosu.soplayer.utils.KLog;
-import com.loosu.soplayer.widget.videoview.controller.gesture.AbsGestureController2;
 import com.loosu.soplayer.widget.videoview.controller.gesture.GestureController;
 import com.loosu.soplayer.widget.videoview.interfaces.IController;
 
 
-public class ClickDetector extends AbsGestureDetector {
+public class ClickDetector extends AbsGestureDetector<GestureController> {
     private static final String TAG = "ClickDetector";
 
-    public ClickDetector(Context context, AbsGestureController2 controller) {
+    public ClickDetector(Context context, GestureController controller) {
         super(context, controller);
     }
 
