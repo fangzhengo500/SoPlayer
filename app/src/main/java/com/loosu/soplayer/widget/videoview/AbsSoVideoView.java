@@ -51,7 +51,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
         super.onDetachedFromWindow();
     }
 
-    protected abstract IMediaPlayer getMediaPlayer();
+    public abstract IMediaPlayer getMediaPlayer();
 
     protected abstract SurfaceHolder getSurfaceHolder();
 
@@ -299,6 +299,7 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
         public void onPrepared(IMediaPlayer mp) {
             KLog.w(TAG, "");
             prepared(mp);
+            seeKTo(10000);
         }
 
 
@@ -319,5 +320,4 @@ public abstract class AbsSoVideoView extends FrameLayout implements IVideoView, 
             videoSizeChanged(mp, width, height, sar_num, sar_den);
         }
     };
-
 }

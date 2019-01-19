@@ -1,9 +1,13 @@
 package com.loosu.soplayer.widget.videoview.controller;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -11,9 +15,11 @@ import android.widget.TextView;
 import com.loosu.soplayer.R;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.TimeUtil;
+import com.loosu.soplayer.widget.videoview.FullScreenSoVideoView;
 import com.loosu.soplayer.widget.videoview.controller.gesture.AbsGestureController;
 import com.loosu.soplayer.widget.videoview.detector.ClickDetector;
 import com.loosu.soplayer.widget.videoview.interfaces.IMediaController;
+
 
 public class ListSimpleController extends AbsGestureController implements View.OnClickListener {
     private static final String TAG = "ListSimpleController";
@@ -59,7 +65,27 @@ public class ListSimpleController extends AbsGestureController implements View.O
     }
 
     private void onClickFullscreen() {
+        FullScreenSoVideoView fullScreenVideo = new FullScreenSoVideoView(getContext(), mPlayer.getCurrentPosition());
+        fullScreenVideo.setDataSource(mPlayer.getDataSource());
 
+        Activity activity = findActivity();
+        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+
+        ViewGroup contentView = (ViewGroup) getActivityContentView();
+        contentView.addView(fullScreenVideo);
+
+
+    }
+
+    private Activity findActivity() {
+        if (getContext() instanceof Activity) {
+            return (Activity) getContext();
+        }
+        return null;
+    }
+
+    public View getActivityContentView() {
+        return findActivity().findViewById(android.R.id.content);
     }
 
     @Override
@@ -159,6 +185,7 @@ public class ListSimpleController extends AbsGestureController implements View.O
                 break;
         }
     }
+
     private final SeekBar.OnSeekBarChangeListener mSeekListener = new SeekBar.OnSeekBarChangeListener() {
 
         @Override
@@ -183,6 +210,7 @@ public class ListSimpleController extends AbsGestureController implements View.O
             updateBtnPlay();
         }
     };
+
     private Runnable mProgressUpdateRunnable = new Runnable() {
         @Override
         public void run() {

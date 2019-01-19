@@ -23,6 +23,8 @@ public interface IMediaController {
 
     public State getState();
 
+    public Object getMediaPlayer();
+
     enum State {
         IDLE,
         INITIALIZED,

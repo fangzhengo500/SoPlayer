@@ -110,7 +110,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     }
 
     @Override
-    protected IMediaPlayer getMediaPlayer() {
+    public IjkMediaPlayer getMediaPlayer() {
         return mPlayer;
     }
 
@@ -174,12 +174,12 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
 
     @Override
     public long getDuration() {
-        return mPlayer.getDuration();
+        return getMediaPlayer().getDuration();
     }
 
     @Override
     public long getCurrentPosition() {
-        return mPlayer.getCurrentPosition();
+        return getMediaPlayer().getCurrentPosition();
     }
 
     @Override
@@ -189,12 +189,12 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
 
     @Override
     public void seeKTo(int position) {
-        mPlayer.seekTo(position);
+        getMediaPlayer().seekTo(position);
     }
 
     @Override
     public boolean isPlaying() {
-        return mPlayer.isPlaying();
+        return getMediaPlayer().isPlaying();
     }
 
     @Override
@@ -237,12 +237,12 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     }
 
 
-    private void showCover() {
+    protected void showCover() {
         mIvCover.setVisibility(VISIBLE);
         mSurfaceView.setVisibility(GONE);
     }
 
-    private void showVideo() {
+    protected void showVideo() {
         mSurfaceView.setVisibility(VISIBLE);
         ValueAnimator animator = ObjectAnimator.ofPropertyValuesHolder(PropertyValuesHolder.ofFloat(View.ALPHA, 0));
         animator.addListener(new AnimatorListenerAdapter() {
@@ -258,7 +258,7 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
     private Runnable mUpdateTcpRunnable = new Runnable() {
         @Override
         public void run() {
-            mTvTcp.setText(Formatter.formatFileSize(getContext(), mPlayer.getTcpSpeed()) + "/s");
+            mTvTcp.setText(Formatter.formatFileSize(getContext(), getMediaPlayer().getTcpSpeed()) + "/s");
 
             removeCallbacks(mUpdateTcpRunnable);
             postDelayed(mUpdateTcpRunnable, 500);
