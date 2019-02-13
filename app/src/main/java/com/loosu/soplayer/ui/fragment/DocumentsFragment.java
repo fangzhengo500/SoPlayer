@@ -28,6 +28,8 @@ import com.loosu.soplayer.business.comparator.VideoNameComparator;
 import com.loosu.soplayer.business.comparator.VideoSizeComparator;
 import com.loosu.soplayer.business.comparator.VideoTypeComparator;
 import com.loosu.soplayer.domain.VideoEntry;
+import com.loosu.soplayer.ui.activity.PlayerActivity;
+import com.loosu.soplayer.ui.activity.VideoPlayerActivity;
 import com.loosu.soplayer.utils.DataHelper;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.utils.PopupMenuUtil;
@@ -104,7 +106,8 @@ public class DocumentsFragment extends Fragment {
 
         mVideoEntries = DataHelper.getVideos(context);
 
-        mAdapters.put(VIEW_MODULE_DEFAULT, new PreViewVideoAdapter(null));
+        //mAdapters.put(VIEW_MODULE_DEFAULT, new PreViewVideoAdapter(null));
+        mAdapters.put(VIEW_MODULE_DEFAULT, new VideoSimpleAdapter(null));
         mAdapters.put(VIEW_MODULE_CARD, new VideoCardAdapter(null));
 
         mLayoutManager = new GridLayoutManager(context, 1);
@@ -117,7 +120,6 @@ public class DocumentsFragment extends Fragment {
 
     private void initView(View view, Bundle savedInstanceState) {
         final Context context = getContext();
-        final Resources resources = getResources();
 
         // toolbar
         mToolbar.setPadding(mToolbar.getPaddingLeft(),
@@ -259,10 +261,12 @@ public class DocumentsFragment extends Fragment {
         public void onItemClick(RecyclerView parent, int position, RecyclerView.ViewHolder holder, View view) {
             DocumentVideoAdapter adapter = (DocumentVideoAdapter) parent.getAdapter();
 
-            Intent intent = VideoViewTestActivity.getStartIntent(getContext(), adapter.getDatas(), position);
+            //Intent intent = VideoViewTestActivity.getStartIntent(getContext(), adapter.getDatas(), position);
 
             //VideoEntry videoEntry = adapter.getItem(position);
             //Intent intent = IjkMediaPlayerTestActivity.getStartIntent(getContext(), videoEntry);
+            //Intent intent = PlayerActivity.getStartIntent(getContext(), adapter.getItem(position).getData());
+            Intent intent = PlayerActivity.getStartIntent(getContext(),"http://ivytest.i-weiying.com/4224/video/20190111/20190111decccd02a358c50c1c3adbe83b0cce84154717339171.mov?auth_key=1548052594-0-0-2dc8be0c9e2d019b39b00f299dc5b89c");
             startActivity(intent);
         }
     };

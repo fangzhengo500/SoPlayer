@@ -14,7 +14,6 @@ import com.loosu.test.ijk.IjkMediaPlayerTestActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-
     private View mBtnMediaExplorer;
     private View mBtnBrowser;
     private View mBtnSettings;
@@ -74,6 +73,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
-
-
 }

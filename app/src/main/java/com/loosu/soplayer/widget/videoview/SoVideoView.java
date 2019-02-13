@@ -7,6 +7,7 @@ import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.format.Formatter;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.loosu.soplayer.R;
+import com.loosu.soplayer.utils.IjkMediaPlayerUtil;
 import com.loosu.soplayer.utils.KLog;
 import com.loosu.soplayer.widget.videoview.controller.Controller;
 import com.loosu.soplayer.widget.videoview.controller.gesture.AnimationGestureController;
@@ -69,6 +71,14 @@ public class SoVideoView extends AbsSoVideoView implements View.OnClickListener 
 
         addView(controller);
         setOnClickListener(this);
+
+        mPlayer.setOnNativeInvokeListener(new IjkMediaPlayer.OnNativeInvokeListener() {
+            @Override
+            public boolean onNativeInvoke(int i, Bundle bundle) {
+                KLog.e(TAG, "i = " + IjkMediaPlayerUtil.errorToString(getContext(), i));
+                return true;
+            }
+        });
     }
 
     protected int getLayoutId() {

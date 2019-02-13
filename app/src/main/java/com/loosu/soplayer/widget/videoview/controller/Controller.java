@@ -57,6 +57,7 @@ public abstract class Controller extends FrameLayout implements IController {
             mPlayer.resume();
 
         } else {
+            KLog.d(TAG, "开始 - start");
             mPlayer.start();
 
         }
